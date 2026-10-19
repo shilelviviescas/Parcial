@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/encabezado :: cabeza('Cliente | MAGISTRAL')}"></head>
+<body>
+  <header th:replace="~{fragmentos/encabezado :: barra(${nombre}, 'Cliente', '/cliente/inicio')}"></header>
+
+  <main>
+    <section class="bienvenida">
+      <div class="container">
+        <h1>Hola, <span th:text="${nombre}">Nombre</span></h1>
+        <p>Esta es tu pantalla como cliente.</p>
+      </div>
+    </section>
+
+    <section class="container py-5">
+      <h2 class="h1">Lo que vas a poder hacer aquí</h2>
+      <p class="nota-pendiente">Estas funciones se van agregando por sprint. Esta pantalla ya está protegida: solo entra quien inició sesión con este rol.</p>
+      <ul class="pendientes">
+        <li>Consultar el menú del restaurante.</li>
+        <li>Hacer tu pedido y ver en qué estado va.</li>
+        <li>Solicitar la cuenta desde tu mesa.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

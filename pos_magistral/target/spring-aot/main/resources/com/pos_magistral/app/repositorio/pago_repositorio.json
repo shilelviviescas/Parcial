@@ -1,0 +1,263 @@
+{
+  "name": "com.pos_magistral.app.repositorio.pago_repositorio",
+  "module": "MongoDB",
+  "type": "IMPERATIVE",
+  "methods": [
+    {
+      "name": "findByCajaIdOrderByFechaAsc",
+      "signature": "public abstract java.util.List<com.pos_magistral.app.entidades.pago> com.pos_magistral.app.repositorio.pago_repositorio.findByCajaIdOrderByFechaAsc(java.lang.String)",
+      "query": {
+        "filter": "{\"cajaId\": ?0}",
+        "sort": "{\"fecha\": 1}"
+      }
+    },
+    {
+      "name": "findByFechaBetweenOrderByFechaAsc",
+      "signature": "public abstract java.util.List<com.pos_magistral.app.entidades.pago> com.pos_magistral.app.repositorio.pago_repositorio.findByFechaBetweenOrderByFechaAsc(java.time.LocalDateTime,java.time.LocalDateTime)",
+      "query": {
+        "filter": "{\"fecha\": {\"$gt\": ?0, \"$lt\": ?1}}",
+        "sort": "{\"fecha\": 1}"
+      }
+    },
+    {
+      "name": "findByPedidoIdOrderByFechaAsc",
+      "signature": "public abstract java.util.List<com.pos_magistral.app.entidades.pago> com.pos_magistral.app.repositorio.pago_repositorio.findByPedidoIdOrderByFechaAsc(java.lang.String)",
+      "query": {
+        "filter": "{\"pedidoId\": ?0}",
+        "sort": "{\"fecha\": 1}"
+      }
+    },
+    {
+      "name": "findAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "insert",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "insert",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "count",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "delete",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "deleteAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "deleteAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "deleteAllById",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "deleteById",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "existsById",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findById",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "save",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAllById",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAllById",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "saveAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "saveAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "count",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "exists",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findAll",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findBy",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    },
+    {
+      "name": "findOne",
+      "signature": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+      "fragment": {
+        "interface": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository",
+        "fragment": "org.springframework.data.mongodb.repository.support.SimpleMongoRepository"
+      }
+    }
+  ]
+}

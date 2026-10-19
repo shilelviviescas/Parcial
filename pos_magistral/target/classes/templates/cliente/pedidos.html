@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+<body>
+
+<header th:replace="~{fragmentos/navbar_cliente :: navbar('pedidos')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="page-head">
+            <span class="section-kicker">Rol cliente</span>
+            <h1>Mis pedidos</h1>
+            <p>Tus pedidos a domicilio y su factura.</p>
+        </div>
+
+        <div class="alert-m" role="status" th:if="${mensaje != null}">
+            <i class="bi bi-info-circle-fill"></i><span th:text="${mensaje}">Mensaje</span>
+        </div>
+        <div class="alert-m" role="alert" th:if="${error != null}">
+            <i class="bi bi-exclamation-circle-fill"></i><span th:text="${error}">Error</span>
+        </div>
+
+        <div class="tabla-wrap" th:if="${!#lists.isEmpty(pedidos)}">
+            <table class="tabla-m">
+                <thead>
+                <tr>
+                    <th>Orden</th><th>Fecha</th><th>Recibe</th><th>Total</th><th>Pago</th><th>Estado</th><th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${pedidos}">
+                    <td><strong th:text="${p.numeroOrden > 0 ? '#' + p.numeroOrden : '-'}">#1</strong></td>
+                    <td th:text="${#temporals.format(p.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2026 12:00</td>
+                    <td th:text="${p.nombreRecibe}">Nombre</td>
+                    <td th:text="'$ ' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                    <td th:text="${p.metodoPagoElegido == 'TARJETA' ? 'Tarjeta' : (p.metodoPagoElegido == 'TRANSFERENCIA' ? 'Transferencia' : 'Efectivo')}">Efectivo</td>
+                    <td>
+                        <span class="chip"
+                              th:classappend="${p.estado == 'TOMADO'} ? 'negro' : (${p.estado == 'CANCELADO'} ? 'gris')"
+                              th:text="${p.estado == 'TOMADO' ? 'Recibido' : (p.estado == 'PAGADO' ? 'Pagado' : (p.estado == 'CANCELADO' ? 'Cancelado' : 'Finalizado'))}">Recibido</span>
+                    </td>
+                    <td class="text-end">
+                        <a class="btn-m-outline" th:href="@{/cliente/pedidos/{id}/factura(id=${p.id})}">
+                            <i class="bi bi-receipt"></i> Factura
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-m text-center" th:if="${#lists.isEmpty(pedidos)}">
+            <h3 class="fw-bold">Todavía no has pedido</h3>
+            <p>Arma tu primer pedido desde el menú.</p>
+            <a class="btn-m" th:href="@{/cliente/menu}">Ir al menú <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+</body>
+</html>

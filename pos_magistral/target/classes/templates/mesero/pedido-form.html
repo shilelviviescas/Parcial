@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+
+<body>
+
+<header th:replace="~{fragmentos/navbar_mesero :: navbar('mesas')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="page-head">
+            <span class="section-kicker">Mesa <span th:text="${mesa.numero}">1</span> · Nuevo pedido</span>
+            <h1>Toma la orden</h1>
+            <p>Agrega los platos, escribe el nombre del cliente y guarda el pedido.</p>
+        </div>
+
+        <div class="alert-m" role="alert" th:if="${error != null}">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <form id="formPedido" th:action="@{/mesero/pedidos/guardar}" method="post" novalidate>
+
+            <input type="hidden" name="mesaId" th:value="${mesa.id}">
+
+            <div class="row g-4">
+
+                <!-- MENÚ -->
+                <div class="col-lg-8">
+
+                    <nav class="cat-nav" aria-label="Categorías del menú">
+                        <a class="cat-pill" href="#hamburguesas"><i class="bi bi-egg-fried me-1"></i> Hamburguesas</a>
+                        <a class="cat-pill" href="#salchipapas"><i class="bi bi-fire me-1"></i> Salchipapas</a>
+                        <a class="cat-pill" href="#bebidas"><i class="bi bi-cup-straw me-1"></i> Bebidas</a>
+                    </nav>
+
+                    <!-- HAMBURGUESAS -->
+                    <section class="menu-block" id="hamburguesas">
+
+                        <div class="menu-block-top">
+                            <h3><i class="bi bi-egg-fried me-2"></i>Tipos de hamburguesas</h3>
+                            <span class="menu-tag" th:text="${#lists.size(hamburguesas)} + ' opciones'">0 opciones</span>
+                        </div>
+
+                        <p class="vacio" th:if="${#lists.isEmpty(hamburguesas)}">
+                            No hay hamburguesas disponibles.
+                        </p>
+
+                        <article class="plato"
+                                 th:each="c : ${hamburguesas}"
+                                 th:attr="data-precio=${c.precio},data-nombre=${c.nombre}">
+
+                            <div>
+                                <h4 th:text="${c.nombre}">Plato</h4>
+                                <p th:text="${c.descripcion != null ? c.descripcion : 'Una deliciosa opción para disfrutar.'}">Descripción</p>
+                            </div>
+
+                            <div class="plato-controles">
+                                <span class="plato-precio"
+                                      th:text="'$ ' + ${#numbers.formatDecimal(c.precio, 1, 'POINT', 0, 'COMMA')}">$ 18.900</span>
+
+                                <div class="qty">
+                                    <button type="button" data-accion="menos" aria-label="Quitar uno">−</button>
+                                    <input type="number" min="0" max="99" value="0" readonly
+                                           th:name="'cantidad_' + ${c.id}"
+                                           aria-label="Cantidad">
+                                    <button type="button" data-accion="mas" aria-label="Agregar uno">+</button>
+                                </div>
+                            </div>
+
+                        </article>
+
+                    </section>
+
+                    <!-- SALCHIPAPAS -->
+                    <section class="menu-block" id="salchipapas">
+
+                        <div class="menu-block-top">
+                            <h3><i class="bi bi-fire me-2"></i>Tipos de salchipapas</h3>
+                            <span class="menu-tag" th:text="${#lists.size(salchipapas)} + ' opciones'">0 opciones</span>
+                        </div>
+
+                        <p class="vacio" th:if="${#lists.isEmpty(salchipapas)}">
+                            No hay salchipapas disponibles.
+                        </p>
+
+                        <article class="plato"
+                                 th:each="c : ${salchipapas}"
+                                 th:attr="data-precio=${c.precio},data-nombre=${c.nombre}">
+
+                            <div>
+                                <h4 th:text="${c.nombre}">Plato</h4>
+                                <p th:text="${c.descripcion != null ? c.descripcion : 'Una deliciosa opción para disfrutar.'}">Descripción</p>
+                            </div>
+
+                            <div class="plato-controles">
+                                <span class="plato-precio"
+                                      th:text="'$ ' + ${#numbers.formatDecimal(c.precio, 1, 'POINT', 0, 'COMMA')}">$ 15.900</span>
+
+                                <div class="qty">
+                                    <button type="button" data-accion="menos" aria-label="Quitar uno">−</button>
+                                    <input type="number" min="0" max="99" value="0" readonly
+                                           th:name="'cantidad_' + ${c.id}"
+                                           aria-label="Cantidad">
+                                    <button type="button" data-accion="mas" aria-label="Agregar uno">+</button>
+                                </div>
+                            </div>
+
+                        </article>
+
+                    </section>
+
+                    <!-- BEBIDAS -->
+                    <section class="menu-block" id="bebidas">
+
+                        <div class="menu-block-top">
+                            <h3><i class="bi bi-cup-straw me-2"></i>Tipos de bebidas</h3>
+                            <span class="menu-tag" th:text="${#lists.size(bebidas)} + ' opciones'">0 opciones</span>
+                        </div>
+
+                        <p class="vacio" th:if="${#lists.isEmpty(bebidas)}">
+                            No hay bebidas disponibles.
+                        </p>
+
+                        <article class="plato"
+                                 th:each="c : ${bebidas}"
+                                 th:attr="data-precio=${c.precio},data-nombre=${c.nombre}">
+
+                            <div>
+                                <h4 th:text="${c.nombre}">Plato</h4>
+                                <p th:text="${c.descripcion != null ? c.descripcion : 'Una deliciosa opción para disfrutar.'}">Descripción</p>
+                            </div>
+
+                            <div class="plato-controles">
+                                <span class="plato-precio"
+                                      th:text="'$ ' + ${#numbers.formatDecimal(c.precio, 1, 'POINT', 0, 'COMMA')}">$ 4.500</span>
+
+                                <div class="qty">
+                                    <button type="button" data-accion="menos" aria-label="Quitar uno">−</button>
+                                    <input type="number" min="0" max="99" value="0" readonly
+                                           th:name="'cantidad_' + ${c.id}"
+                                           aria-label="Cantidad">
+                                    <button type="button" data-accion="mas" aria-label="Agregar uno">+</button>
+                                </div>
+                            </div>
+
+                        </article>
+
+                    </section>
+
+                </div>
+
+                <!-- RESUMEN -->
+                <div class="col-lg-4">
+                    <aside class="resumen">
+
+                        <h3>Mesa <span th:text="${mesa.numero}">1</span></h3>
+                        <span class="section-kicker">Resumen del pedido</span>
+
+                        <label class="lbl" for="nombreCliente">Nombre del cliente</label>
+                        <input type="text"
+                               class="form-control"
+                               id="nombreCliente"
+                               name="nombreCliente"
+                               maxlength="60"
+                               placeholder="Ej: Carlos Pérez"
+                               autocomplete="off"
+                               required>
+
+                        <div class="resumen-lista" id="resumenLista" aria-live="polite">
+                            <p class="text-secondary mb-0">Aún no has agregado platos.</p>
+                        </div>
+
+                        <div class="resumen-total">
+                            <span>Total</span>
+                            <span id="resumenTotal">$ 0</span>
+                        </div>
+
+                        <div class="resumen-acciones">
+                            <button type="submit" class="btn-m btn-block" id="btnGuardar" disabled>
+                                <i class="bi bi-check2-circle"></i> Guardar pedido
+                            </button>
+
+                            <button type="submit"
+                                    class="btn-m-outline btn-block"
+                                    id="btnCancelar"
+                                    formnovalidate
+                                    th:formaction="@{/mesero/mesas/{id}/liberar(id=${mesa.id})}">
+                                <i class="bi bi-x-lg"></i> Cancelar y liberar mesa
+                            </button>
+                        </div>
+
+                    </aside>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+
+<script>
+    (function () {
+        const platos = document.querySelectorAll('.plato');
+        const lista = document.getElementById('resumenLista');
+        const totalEl = document.getElementById('resumenTotal');
+        const btnGuardar = document.getElementById('btnGuardar');
+        const nombre = document.getElementById('nombreCliente');
+        const form = document.getElementById('formPedido');
+
+        function formato(n) {
+            return '$ ' + Math.round(n).toLocaleString('es-CO');
+        }
+
+        function actualizar() {
+            let total = 0;
+            let hayItems = false;
+            lista.innerHTML = '';
+
+            platos.forEach(function (plato) {
+                const input = plato.querySelector('input');
+                const cantidad = parseInt(input.value, 10) || 0;
+
+                if (cantidad > 0) {
+                    hayItems = true;
+                    const precio = parseFloat(plato.dataset.precio);
+                    total += precio * cantidad;
+
+                    const fila = document.createElement('div');
+                    fila.className = 'resumen-item';
+
+                    const izquierda = document.createElement('span');
+                    izquierda.textContent = cantidad + ' × ' + plato.dataset.nombre;
+
+                    const derecha = document.createElement('strong');
+                    derecha.textContent = formato(precio * cantidad);
+
+                    fila.appendChild(izquierda);
+                    fila.appendChild(derecha);
+                    lista.appendChild(fila);
+                }
+            });
+
+            if (!hayItems) {
+                const vacio = document.createElement('p');
+                vacio.className = 'text-secondary mb-0';
+                vacio.textContent = 'Aún no has agregado platos.';
+                lista.appendChild(vacio);
+            }
+
+            totalEl.textContent = formato(total);
+            btnGuardar.disabled = !hayItems;
+        }
+
+        platos.forEach(function (plato) {
+            const input = plato.querySelector('input');
+
+            plato.querySelectorAll('.qty button').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    let valor = parseInt(input.value, 10) || 0;
+                    valor = btn.dataset.accion === 'mas' ? Math.min(99, valor + 1) : Math.max(0, valor - 1);
+                    input.value = valor;
+                    actualizar();
+                });
+            });
+        });
+
+        // Solo valida el nombre cuando se le da a "Guardar pedido"
+        form.addEventListener('submit', function (e) {
+            const boton = e.submitter;
+            const esGuardar = boton && boton.id === 'btnGuardar';
+
+            if (esGuardar && !nombre.value.trim()) {
+                e.preventDefault();
+                nombre.focus();
+                nombre.classList.add('is-invalid');
+            }
+        });
+
+        nombre.addEventListener('input', function () {
+            nombre.classList.remove('is-invalid');
+        });
+
+        actualizar();
+    })();
+</script>
+
+</body>
+</html>

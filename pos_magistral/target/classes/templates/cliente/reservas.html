@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+<body>
+
+<header th:replace="~{fragmentos/navbar_cliente :: navbar('reservas')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="page-head">
+            <span class="section-kicker">Rol cliente</span>
+            <h1>Reservas</h1>
+            <p>Reserva una mesa con fecha, hora y, si quieres, decoración.</p>
+        </div>
+
+        <div class="alert-m" role="status" th:if="${mensaje != null}">
+            <i class="bi bi-info-circle-fill"></i><span th:text="${mensaje}">Mensaje</span>
+        </div>
+        <div class="alert-m" role="alert" th:if="${error != null}">
+            <i class="bi bi-exclamation-circle-fill"></i><span th:text="${error}">Error</span>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- ==================== FORMULARIO ==================== -->
+            <div class="col-lg-5">
+                <div class="card-m">
+
+                    <h3 class="fw-bold mb-1">Reservar una mesa</h3>
+
+                    <form th:action="@{/cliente/reservas/guardar}" method="post" novalidate>
+
+                        <label class="lbl-m" for="fecha">Fecha</label>
+                        <input type="date" class="form-control" id="fecha" name="fecha"
+                               th:min="${fechaMinima}" th:value="${fecha}" required>
+
+                        <label class="lbl-m" for="hora">Hora</label>
+                        <input type="time" class="form-control" id="hora" name="hora"
+                               th:value="${hora}" required>
+
+                        <label class="lbl-m" for="personas">Número de personas</label>
+                        <input type="number" class="form-control" id="personas" name="personas"
+                               min="1" th:max="${maxPersonas}"
+                               th:value="${#strings.isEmpty(personas)} ? '2' : ${personas}" required>
+
+                        <div class="form-check mt-4">
+                            <input class="form-check-input" type="checkbox" id="decoracion" name="decoracion" value="si"
+                                   th:checked="${decoracion != null and decoracion}">
+                            <label class="form-check-label fw-bold" for="decoracion">Quiero decoración</label>
+                        </div>
+
+                        <div id="bloqueOcasion" class="d-none">
+                            <label class="lbl-m" for="ocasion">¿Para qué ocasión?</label>
+                            <select class="form-select" id="ocasion" name="ocasion">
+                                <option value="">Elige la ocasión</option>
+                                <option th:each="o : ${ocasiones}" th:value="${o}" th:text="${o}"
+                                        th:selected="${o == ocasion}">Cumpleaños</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-m btn-block mt-4">
+                            <i class="bi bi-calendar-check"></i> Reservar
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+            <!-- ==================== MIS RESERVAS ==================== -->
+            <div class="col-lg-7">
+
+                <h3 class="fw-bold mb-3">Mis reservas</h3>
+
+                <div class="tabla-wrap" th:if="${!#lists.isEmpty(reservas)}">
+                    <table class="tabla-m">
+                        <thead>
+                        <tr>
+                            <th>Fecha</th><th>Hora</th><th>Personas</th><th>Decoración</th><th>Estado</th><th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="r : ${reservas}">
+                            <td th:text="${#temporals.format(r.fecha, 'dd/MM/yyyy')}">01/01/2026</td>
+                            <td th:text="${#temporals.format(r.hora, 'HH:mm')}">19:00</td>
+                            <td th:text="${r.personas}">2</td>
+                            <td th:text="${r.decoracion ? 'Sí · ' + r.ocasion : 'No'}">No</td>
+                            <td>
+                                <span class="chip"
+                                      th:classappend="${r.estado == 'PENDIENTE'} ? 'negro' : (${r.estado == 'CANCELADA'} ? 'gris')"
+                                      th:text="${r.estado == 'PENDIENTE' ? 'Pendiente' : (r.estado == 'CONFIRMADA' ? 'Confirmada' : 'Cancelada')}">Pendiente</span>
+                            </td>
+                            <td class="text-end">
+                                <form th:if="${r.estado != 'CANCELADA'}"
+                                      th:action="@{/cliente/reservas/{id}/cancelar(id=${r.id})}" method="post"
+                                      onsubmit="return confirm('¿Cancelar esta reserva?');">
+                                    <button type="submit" class="btn-m-outline"><i class="bi bi-x-lg"></i> Cancelar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card-m text-center" th:if="${#lists.isEmpty(reservas)}">
+                    <p class="mb-0">Todavía no tienes reservas.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+
+<script>
+    (function () {
+        const check = document.getElementById('decoracion');
+        const bloque = document.getElementById('bloqueOcasion');
+
+        function mostrar() {
+            bloque.classList.toggle('d-none', !check.checked);
+        }
+
+        check.addEventListener('change', mostrar);
+        mostrar();
+    })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,947 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MAGISTRAL | Panel de administración</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f5f5;
+            color: #050505;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .contenedor {
+            width: min(1240px, calc(100% - 48px));
+            margin: 0 auto;
+        }
+
+        /* NAVEGACIÓN */
+
+        .barra {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            color: white;
+        }
+
+        .barra-contenido {
+            min-height: 88px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+        }
+
+        .marca-pequena {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+
+        .marca-pequena i {
+            font-size: 20px;
+        }
+
+        .nav-derecha {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            font-size: 14px;
+        }
+
+        .nav-derecha a {
+            color: #ccc;
+            transition: color .2s;
+        }
+
+        .nav-derecha a:hover {
+            color: white;
+        }
+
+        .nav-derecha .activo {
+            color: white;
+        }
+
+        .nav-derecha .cerrar {
+            color: #1683ff;
+            text-decoration: underline;
+        }
+
+        .usuario {
+            color: #888;
+        }
+
+        .usuario strong {
+            color: #ddd;
+        }
+
+        /* PORTADA */
+
+        .admin-hero {
+            position: relative;
+            overflow: hidden;
+            background: #050505;
+            color: white;
+            border-bottom: 1px solid #262626;
+        }
+
+        .admin-hero-contenido {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            min-height: 560px;
+            padding-top: 105px;
+            padding-bottom: 55px;
+        }
+
+        .admin-hero-texto {
+            max-width: 800px;
+        }
+
+        .admin-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+            color: #ccc;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+
+        .admin-eyebrow i {
+            font-size: 18px;
+        }
+
+        .admin-hero h1 {
+            margin: 0 0 22px;
+            font-family: 'Anton', Impact, sans-serif;
+            font-size: clamp(60px, 8vw, 120px);
+            font-weight: 400;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .admin-hero h1 span {
+            display: block;
+            color: #bdbdbd;
+        }
+
+        .admin-hero-texto > p {
+            max-width: 600px;
+            margin: 0 0 30px;
+            color: #d0d0d0;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .admin-hero-etiquetas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .admin-hero-etiquetas a {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 13px 15px;
+            border: 1px solid #414141;
+            color: #eee;
+            font-size: 13px;
+            transition: .2s;
+        }
+
+        .admin-hero-etiquetas a:hover {
+            background: #222;
+            border-color: #888;
+        }
+
+        /* LOGOTIPO */
+
+        .admin-hero-icono {
+            display: flex;
+            flex: 0 0 230px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 230px;
+            height: 230px;
+            border: 1px solid #353535;
+            border-radius: 50%;
+            color: white;
+        }
+
+        .admin-hero-icono > i {
+            margin-bottom: 18px;
+            font-size: 60px;
+        }
+
+        .admin-hero-icono > span {
+            font-family: 'Anton', Impact, sans-serif;
+            font-size: 27px;
+            letter-spacing: 2px;
+        }
+
+        .admin-hero-icono > small {
+            margin-top: 5px;
+            color: #aaa;
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        /* CONTENIDO */
+
+        .admin-contenido {
+            padding: 75px 0 85px;
+            background: #f5f5f5;
+        }
+
+        .admin-seccion-cabecera {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 25px;
+            margin-bottom: 38px;
+        }
+
+        .admin-seccion-etiqueta {
+            margin-bottom: 14px;
+            color: #777;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 3px;
+        }
+
+        .admin-seccion-cabecera h2 {
+            margin: 0 0 13px;
+            font-family: 'Anton', Impact, sans-serif;
+            font-size: clamp(42px, 5vw, 64px);
+            font-weight: 400;
+            line-height: 1.08;
+        }
+
+        .admin-seccion-cabecera p {
+            max-width: 650px;
+            margin: 0;
+            color: #696969;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .admin-indicador {
+            display: inline-flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #444;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .admin-indicador-punto {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #555;
+        }
+
+        /* TARJETAS */
+
+        .admin-tarjetas {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .admin-card {
+            display: flex;
+            flex-direction: column;
+            min-height: 330px;
+            padding: 25px 23px 20px;
+            border: 1px solid #dedede;
+            border-top: 4px solid #080808;
+            background: white;
+            transition: transform .2s, background .2s, color .2s;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            background: #080808;
+            color: white;
+        }
+
+        .admin-card-superior {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 27px;
+        }
+
+        .admin-card-icono {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 55px;
+            height: 55px;
+            border: 1px solid #dedede;
+            background: #f5f5f5;
+            color: #050505;
+            font-size: 24px;
+        }
+
+        .admin-card:hover .admin-card-icono {
+            border-color: #555;
+            background: #222;
+            color: white;
+        }
+
+        .admin-card-numero {
+            color: #b8b8b8;
+            font-family: 'Anton', Impact, sans-serif;
+            font-size: 29px;
+        }
+
+        .admin-card-categoria {
+            margin-bottom: 10px;
+            color: #777;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .admin-card:hover .admin-card-categoria {
+            color: #aaa;
+        }
+
+        .admin-card h3 {
+            margin: 0 0 13px;
+            font-family: 'Anton', Impact, sans-serif;
+            font-size: 29px;
+            font-weight: 400;
+        }
+
+        .admin-card > p {
+            flex: 1;
+            margin: 0 0 25px;
+            color: #686868;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .admin-card:hover > p {
+            color: #d0d0d0;
+        }
+
+        .admin-card-pie {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding-top: 17px;
+            border-top: 1px solid #e2e2e2;
+            color: #111;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .admin-card:hover .admin-card-pie {
+            border-color: #444;
+            color: white;
+        }
+
+        .admin-card-pie i {
+            font-size: 17px;
+        }
+
+        /* AVISO */
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            margin-top: 40px;
+            padding: 28px;
+            border: 1px solid #dedede;
+            background: white;
+        }
+
+        .admin-info-icono {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            background: #050505;
+            color: white;
+            font-size: 23px;
+        }
+
+        .admin-info-texto {
+            flex: 1;
+        }
+
+        .admin-info-texto h3 {
+            margin: 0 0 8px;
+            font-family: 'Anton', Impact, sans-serif;
+            font-size: 27px;
+            font-weight: 400;
+        }
+
+        .admin-info-texto p {
+            max-width: 780px;
+            margin: 0;
+            color: #696969;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .admin-info-marca {
+            color: #e5e5e5;
+            font-family: 'Anton', Impact, sans-serif;
+            font-size: 56px;
+        }
+
+        /* PIE DE PÁGINA */
+
+        .admin-footer {
+            padding: 28px 0;
+            background: #050505;
+            color: white;
+        }
+
+        .admin-footer-contenido {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .admin-footer-contenido > div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-footer-contenido strong {
+            font-family: 'Anton', Impact, sans-serif;
+            font-size: 27px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .admin-footer-contenido div span {
+            color: #aaa;
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        .admin-footer-contenido p {
+            margin: 0;
+            color: #ddd;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .admin-footer-contenido p span {
+            display: block;
+            margin-top: 5px;
+            color: #888;
+        }
+
+        /* DISEÑO RESPONSIVE */
+
+        @media (max-width: 900px) {
+            .admin-hero-contenido {
+                min-height: 500px;
+            }
+
+            .admin-hero-icono {
+                flex-basis: 170px;
+                width: 170px;
+                height: 170px;
+            }
+
+            .admin-hero-icono > i {
+                font-size: 43px;
+            }
+
+            .admin-tarjetas {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .admin-seccion-cabecera {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .contenedor {
+                width: calc(100% - 32px);
+            }
+
+            .barra-contenido {
+                min-height: 75px;
+            }
+
+            .marca-pequena {
+                font-size: 9px;
+                letter-spacing: 1px;
+            }
+
+            .nav-derecha {
+                gap: 12px;
+                font-size: 11px;
+            }
+
+            .usuario {
+                display: none;
+            }
+
+            .admin-hero-contenido {
+                min-height: auto;
+                padding-top: 125px;
+                padding-bottom: 48px;
+            }
+
+            .admin-hero h1 {
+                font-size: clamp(48px, 13vw, 75px);
+            }
+
+            .admin-hero-texto > p {
+                font-size: 14px;
+            }
+
+            .admin-hero-icono {
+                display: none;
+            }
+
+            .admin-hero-etiquetas {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .admin-contenido {
+                padding: 48px 0;
+            }
+
+            .admin-seccion-cabecera h2 {
+                font-size: 43px;
+            }
+
+            .admin-tarjetas {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-card {
+                min-height: 285px;
+            }
+
+            .admin-info {
+                align-items: flex-start;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .admin-info-marca {
+                display: none;
+            }
+
+            .admin-info-texto h3 {
+                font-size: 23px;
+            }
+
+            .admin-footer-contenido {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .admin-footer-contenido p {
+                text-align: left;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+
+    <header class="barra">
+        <div class="contenedor barra-contenido">
+
+        
+            <nav class="nav-derecha">
+                <a class="activo" href="#inicio">Inicio</a>
+
+                
+
+                <a class="cerrar" href="/logout" id="cerrarSesion">
+                    Cerrar sesión
+                </a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <!-- PORTADA PRINCIPAL -->
+
+        <section class="admin-hero" id="inicio">
+
+            <div class="contenedor admin-hero-contenido">
+
+                <div class="admin-hero-texto">
+
+                    <div class="admin-eyebrow">
+                        <i class="fa-solid fa-grip"></i>
+                        PANEL DE CONTROL
+                    </div>
+
+                    <h1>
+                        MAGISTRAL
+                        <span>Administrador</span>
+                    </h1>
+
+                    <p>
+                        Todo lo que necesitas para gestionar MAGISTRAL,
+                        desde un solo lugar.
+                    </p>
+
+                    <div class="admin-hero-etiquetas">
+
+                        <a href="#administracion">
+                            <i class="fa-regular fa-shield-halved"></i>
+                            Acceso de administrador
+                        </a>
+
+                        <a href="#administracion">
+                            <i class="fa-solid fa-shop"></i>
+                            Gestión del restaurante
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="admin-hero-icono">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>MAGISTRAL</span>
+                    <small>COCINA IRRESISTIBLE</small>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- PANEL DE ADMINISTRACIÓN -->
+
+        <section class="admin-contenido" id="administracion">
+
+            <div class="contenedor">
+
+                <div class="admin-seccion-cabecera">
+
+                    <div>
+                        <div class="admin-seccion-etiqueta">
+                            ADMINISTRACIÓN
+                        </div>
+
+                        <h2>Tu restaurante, bajo control.</h2>
+
+                        <p>
+                            Consulta las áreas principales que forman
+                            parte de la gestión del restaurante.
+                        </p>
+                    </div>
+
+                    <div class="admin-indicador">
+                        <span class="admin-indicador-punto"></span>
+                        Panel principal
+                    </div>
+
+                </div>
+
+                <div class="admin-tarjetas">
+
+                    <!-- PRODUCTOS -->
+
+                    <a class="admin-card" href="/productos">
+
+                        <div class="admin-card-superior">
+                            <div class="admin-card-icono">
+                                <i class="fa-solid fa-boxes-stacked"></i>
+                            </div>
+                            <span class="admin-card-numero">01</span>
+                        </div>
+
+                        <div class="admin-card-categoria">
+                            INVENTARIO
+                        </div>
+
+                        <h3>Productos e insumos</h3>
+
+                        <p>
+                            Organiza los productos, consulta sus existencias
+                            y mantén el inventario actualizado.
+                        </p>
+
+                        <div class="admin-card-pie">
+                            <span>Gestionar productos</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+
+                    </a>
+
+                    <!-- MENÚ -->
+
+                    <a class="admin-card" href="/menu">
+
+                        <div class="admin-card-superior">
+                            <div class="admin-card-icono">
+                                <i class="fa-solid fa-utensils"></i>
+                            </div>
+                            <span class="admin-card-numero">02</span>
+                        </div>
+
+                        <div class="admin-card-categoria">
+                            CARTA
+                        </div>
+
+                        <h3>Menú del restaurante</h3>
+
+                        <p>
+                            Administra los platos, sus descripciones,
+                            categorías y precios.
+                        </p>
+
+                        <div class="admin-card-pie">
+                            <span>Gestionar menú</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+
+                    </a>
+
+                    <!-- PEDIDOS -->
+
+                    <a class="admin-card" href="/pedidos">
+
+                        <div class="admin-card-superior">
+                            <div class="admin-card-icono">
+                                <i class="fa-solid fa-receipt"></i>
+                            </div>
+                            <span class="admin-card-numero">03</span>
+                        </div>
+
+                        <div class="admin-card-categoria">
+                            OPERACIÓN
+                        </div>
+
+                        <h3>Pedidos y ventas</h3>
+
+                        <p>
+                            Consulta los pedidos registrados y realiza
+                            seguimiento a las ventas del negocio.
+                        </p>
+
+                        <div class="admin-card-pie">
+                            <span>Ver pedidos</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+
+                    </a>
+
+                    <!-- USUARIOS -->
+
+                    <a class="admin-card" href="/usuarios">
+
+                        <div class="admin-card-superior">
+                            <div class="admin-card-icono">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <span class="admin-card-numero">04</span>
+                        </div>
+
+                        <div class="admin-card-categoria">
+                            PERSONAL
+                        </div>
+
+                        <h3>Usuarios y personal</h3>
+
+                        <p>
+                            Consulta y organiza las cuentas que tienen
+                            acceso al sistema de administración.
+                        </p>
+
+                        <div class="admin-card-pie">
+                            <span>Gestionar usuarios</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+
+                    </a>
+
+                    <!-- RESERVAS -->
+
+                    <a class="admin-card" href="/reservas">
+
+                        <div class="admin-card-superior">
+                            <div class="admin-card-icono">
+                                <i class="fa-regular fa-calendar-check"></i>
+                            </div>
+                            <span class="admin-card-numero">05</span>
+                        </div>
+
+                        <div class="admin-card-categoria">
+                            ATENCIÓN
+                        </div>
+
+                        <h3>Reservas</h3>
+
+                        <p>
+                            Revisa las reservas de los clientes y organiza
+                            la atención en el restaurante.
+                        </p>
+
+                        <div class="admin-card-pie">
+                            <span>Consultar reservas</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+
+                    </a>
+
+                    <!-- REPORTES -->
+
+                    <a class="admin-card" href="/reportes">
+
+                        <div class="admin-card-superior">
+                            <div class="admin-card-icono">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <span class="admin-card-numero">06</span>
+                        </div>
+
+                        <div class="admin-card-categoria">
+                            SEGUIMIENTO
+                        </div>
+
+                        <h3>Reportes</h3>
+
+                        <p>
+                            Consulta información útil para revisar
+                            el movimiento del negocio.
+                        </p>
+
+                        <div class="admin-card-pie">
+                            <span>Ver reportes</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+
+                    </a>
+
+                </div>
+
+                <!-- AVISO INFORMATIVO -->
+
+                <aside class="admin-info">
+
+                    <div class="admin-info-icono">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+
+                    <div class="admin-info-texto">
+
+                        <h3>Todo organizado en un solo lugar.</h3>
+
+                        <p>
+                            Utiliza los accesos del panel para entrar
+                            a cada módulo y administrar las diferentes
+                            áreas de MAGISTRAL.
+                        </p>
+
+                    </div>
+
+                    <div class="admin-info-marca">M.</div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+
+    <footer class="admin-footer">
+
+        <div class="contenedor admin-footer-contenido">
+
+            <div>
+                <strong>MAGISTRAL</strong>
+                <span>COCINA IRRESISTIBLE</span>
+            </div>
+
+            <p>
+                Panel de administración
+                <span>
+                    © <span id="anio"></span>
+                    MAGISTRAL. Todos los derechos reservados.
+                </span>
+            </p>
+
+        </div>
+
+    </footer>
+
+    <script>
+        // Mostrar automáticamente el año actual
+        document.getElementById("anio").textContent =
+            new Date().getFullYear();
+    </script>
+
+</body>
+</html>

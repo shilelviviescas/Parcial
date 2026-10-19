@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+
+<body>
+
+<header th:replace="~{fragmentos/navbar_cajero :: navbar('pedidos')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="page-head">
+            <span class="section-kicker">
+                Orden <span th:text="${pedido.numeroOrden > 0 ? '#' + pedido.numeroOrden : '-'}">#1</span>
+                · Mesa <span th:text="${pedido.numeroMesa}">1</span>
+            </span>
+            <h1 th:text="${pedido.nombreCliente}">Cliente</h1>
+            <p th:if="${modo == 'total'}">Se cobra todo lo que falta del pedido.</p>
+            <p th:if="${modo == 'dividido'}">Elige cuántas unidades de cada producto paga esta persona. Después puedes cobrar a la siguiente.</p>
+        </div>
+		
+		<div class="alert-m" th:if="${pedido.domicilio}">
+		    <i class="bi bi-bicycle"></i>
+		    <span><strong>Domicilio:</strong>
+		        <span th:text="${pedido.nombreRecibe + ' · ' + pedido.telefono + ' · ' + pedido.direccion}">Datos</span></span>
+		</div>
+
+        <div class="alert-m" role="alert" th:if="${error != null}">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <!-- Cambiar entre cobrar todo o dividir la cuenta -->
+        <nav class="cat-nav" style="position: static;" aria-label="Tipo de cobro">
+            <a class="cat-pill"
+               th:classappend="${modo == 'total'} ? 'activo'"
+               th:href="@{/cajero/pedidos/{id}/cobrar(id=${pedido.id}, modo='total')}">
+                <i class="bi bi-cash-coin me-1"></i> Cobrar total
+            </a>
+            <a class="cat-pill"
+               th:classappend="${modo == 'dividido'} ? 'activo'"
+               th:href="@{/cajero/pedidos/{id}/cobrar(id=${pedido.id}, modo='dividido')}">
+                <i class="bi bi-people me-1"></i> Cobrar dividida
+            </a>
+        </nav>
+
+        <form id="formCobro"
+              th:action="@{/cajero/pedidos/{id}/pagar(id=${pedido.id})}"
+              th:attr="data-modo=${modo},data-porcentaje=${porcentajePropina}"
+              method="post" novalidate>
+
+            <input type="hidden" name="modo" th:value="${modo}">
+
+            <div class="row g-4">
+
+                <!-- ==================== PRODUCTOS ==================== -->
+                <div class="col-lg-7">
+                    <div class="tabla-wrap">
+                        <table class="tabla-m">
+                            <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th class="text-center">Pedidas</th>
+                                <th class="text-center">Pagadas</th>
+                                <th class="text-end" th:text="${modo == 'dividido' ? 'Cobrar ahora' : 'Se cobra'}">Cobrar</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="item, st : ${pedido.items}"
+                                class="linea-cobro"
+                                th:attr="data-precio=${item.precioUnitario},data-pendiente=${item.cantidadPendiente}">
+
+                                <td><strong th:text="${item.nombre}">Producto</strong></td>
+                                <td th:text="'$ ' + ${#numbers.formatDecimal(item.precioUnitario, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                                <td class="text-center" th:text="${item.cantidad}">1</td>
+                                <td class="text-center" th:text="${item.cantidadPagada}">0</td>
+
+                                <td class="text-end">
+
+                                    <span class="chip" th:if="${item.cantidadPendiente == 0}">Pagado</span>
+
+                                    <!-- Cobrar total: se cobra lo que falte -->
+                                    <strong th:if="${item.cantidadPendiente > 0 and modo == 'total'}"
+                                            th:text="${item.cantidadPendiente}">1</strong>
+
+                                    <!-- Cobrar dividida: se elige cuántas unidades -->
+                                    <div class="qty" th:if="${item.cantidadPendiente > 0 and modo == 'dividido'}">
+                                        <button type="button" data-accion="menos" aria-label="Quitar uno">−</button>
+                                        <input type="number" min="0" value="0" readonly
+                                               th:max="${item.cantidadPendiente}"
+                                               th:name="'pagar_' + ${st.index}"
+                                               aria-label="Unidades a cobrar">
+                                        <button type="button" data-accion="mas" aria-label="Agregar uno">+</button>
+                                    </div>
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="text-secondary mt-3 mb-0">
+                        Falta por cobrar del pedido:
+                        <strong th:text="'$ ' + ${#numbers.formatDecimal(pedido.totalPendiente, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                    </p>
+                </div>
+
+                <!-- ==================== COBRO ==================== -->
+                <div class="col-lg-4 offset-lg-1 col-lg-5 offset-lg-0">
+                    <aside class="resumen">
+
+                        <h3>Cobro</h3>
+                        <span class="section-kicker">Resumen del pago</span>
+
+                        <div class="resumen-lista">
+                            <div class="resumen-item">
+                                <span>Subtotal</span>
+                                <strong id="subtotalEl">$ 0</strong>
+                            </div>
+
+                            <div class="resumen-item">
+                                <span>
+                                    Propina voluntaria
+                                    (<span th:text="${porcentajePropina}">10</span>%)
+                                </span>
+                                <strong id="propinaEl">$ 0</strong>
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="conPropina" name="conPropina" value="si">
+                            <label class="form-check-label fw-bold" for="conPropina">
+                                Incluir propina del <span th:text="${porcentajePropina}">10</span>%
+                            </label>
+                        </div>
+
+                        <div class="resumen-total">
+                            <span>Total a cobrar</span>
+                            <span id="totalEl">$ 0</span>
+                        </div>
+
+                        <label class="lbl" for="metodo">Medio de pago</label>
+                        <select class="form-select mb-2" id="metodo" name="metodo"
+                                style="min-height: 52px; border-radius: 0;">
+							<option value="EFECTIVO">Efectivo</option>
+							<option value="TARJETA" th:selected="${pedido.metodoPagoElegido == 'TARJETA'}">Tarjeta</option>
+							<option value="TRANSFERENCIA" th:selected="${pedido.metodoPagoElegido == 'TRANSFERENCIA'}">Transferencia</option>
+                        </select>
+
+                        <!-- Solo en efectivo: con cuánto pagó el cliente y vueltos -->
+                        <div id="bloqueEfectivo">
+                            <label class="lbl" for="recibido">Efectivo recibido</label>
+                            <div class="d-flex gap-2">
+                                <input type="text"
+                                       class="form-control"
+                                       id="recibido"
+                                       name="recibido"
+                                       inputmode="numeric"
+                                       placeholder="Con cuánto paga"
+                                       autocomplete="off"
+                                       style="min-height: 52px; border-radius: 0;">
+                                <button type="button" class="btn-m-outline" id="btnExacto">Exacto</button>
+                            </div>
+
+                            <div class="resumen-item mt-3">
+                                <span>Vueltos</span>
+                                <strong id="vueltosEl">$ 0</strong>
+                            </div>
+                            <small class="text-secondary d-block" id="avisoEfectivo">
+                                Si lo dejas vacío se toma como pago exacto.
+                            </small>
+                        </div>
+
+                        <div class="form-check mt-4 mb-3">
+                            <input class="form-check-input" type="checkbox" id="liberarMesa" name="liberarMesa" value="si">
+                            <label class="form-check-label fw-bold" for="liberarMesa">
+                                Liberar mesa <span th:text="${pedido.numeroMesa}">1</span> al pagar
+                            </label>
+                            <small class="text-secondary d-block">
+                                Solo se libera si el pedido queda pagado por completo.
+                            </small>
+                        </div>
+
+                        <div class="resumen-acciones">
+                            <button type="submit" class="btn-m btn-block" id="btnPagar" disabled>
+                                <i class="bi bi-check2-circle"></i> Pagar
+                            </button>
+                            <a class="btn-m-outline btn-block" th:href="@{/cajero/pedidos}">
+                                <i class="bi bi-arrow-left"></i> Volver
+                            </a>
+                        </div>
+
+                    </aside>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+
+<script>
+    (function () {
+        const form = document.getElementById('formCobro');
+        const modo = form.dataset.modo;
+        const porcentaje = parseFloat(form.dataset.porcentaje) || 0;
+
+        const filas = document.querySelectorAll('.linea-cobro');
+        const subtotalEl = document.getElementById('subtotalEl');
+        const propinaEl = document.getElementById('propinaEl');
+        const totalEl = document.getElementById('totalEl');
+        const conPropina = document.getElementById('conPropina');
+        const metodo = document.getElementById('metodo');
+        const bloqueEfectivo = document.getElementById('bloqueEfectivo');
+        const recibido = document.getElementById('recibido');
+        const vueltosEl = document.getElementById('vueltosEl');
+        const avisoEfectivo = document.getElementById('avisoEfectivo');
+        const btnExacto = document.getElementById('btnExacto');
+        const btnPagar = document.getElementById('btnPagar');
+
+        let totalActual = 0;
+
+        function formato(n) {
+            return '$ ' + Math.round(n).toLocaleString('es-CO');
+        }
+
+        function soloNumeros(texto) {
+            const limpio = (texto || '').replace(/[^0-9]/g, '');
+            return limpio === '' ? 0 : parseInt(limpio, 10);
+        }
+
+        function calcularSubtotal() {
+            let suma = 0;
+
+            filas.forEach(function (fila) {
+                const precio = parseFloat(fila.dataset.precio) || 0;
+                const pendiente = parseInt(fila.dataset.pendiente, 10) || 0;
+
+                if (modo === 'dividido') {
+                    const input = fila.querySelector('input[type=number]');
+                    const cantidad = input ? (parseInt(input.value, 10) || 0) : 0;
+                    suma += precio * cantidad;
+                } else {
+                    suma += precio * pendiente;
+                }
+            });
+
+            return suma;
+        }
+
+        function actualizar() {
+            const subtotal = calcularSubtotal();
+            const propina = conPropina.checked ? Math.round(subtotal * (porcentaje / 100)) : 0;
+            totalActual = subtotal + propina;
+
+            subtotalEl.textContent = formato(subtotal);
+            propinaEl.textContent = formato(propina);
+            totalEl.textContent = formato(totalActual);
+
+            let puedePagar = subtotal > 0;
+
+            const esEfectivo = metodo.value === 'EFECTIVO';
+            bloqueEfectivo.classList.toggle('d-none', !esEfectivo);
+
+            if (esEfectivo) {
+                const dado = soloNumeros(recibido.value);
+
+                if (dado === 0) {
+                    vueltosEl.textContent = formato(0);
+                    avisoEfectivo.textContent = 'Si lo dejas vacío se toma como pago exacto.';
+                } else if (dado < totalActual) {
+                    vueltosEl.textContent = formato(0);
+                    avisoEfectivo.textContent = 'Faltan ' + formato(totalActual - dado) + ' para completar el total.';
+                    puedePagar = false;
+                } else {
+                    vueltosEl.textContent = formato(dado - totalActual);
+                    avisoEfectivo.textContent = 'Devuelve ' + formato(dado - totalActual) + ' al cliente.';
+                }
+            }
+
+            btnPagar.disabled = !puedePagar;
+        }
+
+        // Selector de unidades (solo en cobro dividido)
+        filas.forEach(function (fila) {
+            const input = fila.querySelector('input[type=number]');
+            if (!input) {
+                return;
+            }
+
+            const maximo = parseInt(fila.dataset.pendiente, 10) || 0;
+
+            fila.querySelectorAll('.qty button').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    let valor = parseInt(input.value, 10) || 0;
+                    valor = btn.dataset.accion === 'mas' ? Math.min(maximo, valor + 1) : Math.max(0, valor - 1);
+                    input.value = valor;
+                    actualizar();
+                });
+            });
+        });
+
+        conPropina.addEventListener('change', actualizar);
+        metodo.addEventListener('change', actualizar);
+        recibido.addEventListener('input', actualizar);
+
+        btnExacto.addEventListener('click', function () {
+            recibido.value = Math.round(totalActual);
+            actualizar();
+        });
+
+        form.addEventListener('submit', function (e) {
+            if (btnPagar.disabled) {
+                e.preventDefault();
+            }
+        });
+
+        actualizar();
+    })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+
+<body>
+
+<style>
+    .factura {
+        max-width: 460px;
+        margin: 0 auto;
+        padding: 1.8rem;
+        border: 2px solid #000000;
+        background: #FFFFFF;
+    }
+
+    .factura-marca {
+        text-align: center;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px dashed #000000;
+    }
+
+    .factura-marca h2 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 900;
+        letter-spacing: -.05em;
+    }
+
+    .factura-marca span {
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        color: #555555;
+    }
+
+    .factura-datos { font-size: .9rem; line-height: 1.7; margin-bottom: 1rem; }
+    .factura-datos div { display: flex; justify-content: space-between; gap: 1rem; }
+    .factura-datos div strong { text-align: right; }
+
+    .factura-entrega {
+        padding: .9rem 1rem;
+        margin-bottom: 1rem;
+        border: 1px dashed #000000;
+        background: #F5F5F5;
+        font-size: .9rem;
+        line-height: 1.6;
+    }
+
+    .factura-entrega .titulo {
+        margin-bottom: .3rem;
+        font-size: .7rem;
+        font-weight: 900;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: #555555;
+    }
+
+    .factura-lineas { width: 100%; font-size: .9rem; border-collapse: collapse; }
+    .factura-lineas th {
+        padding: .5rem 0;
+        border-top: 2px solid #000000;
+        border-bottom: 1px solid #000000;
+        font-size: .7rem;
+        font-weight: 900;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        text-align: left;
+    }
+    .factura-lineas td { padding: .45rem 0; border-bottom: 1px dotted #AAAAAA; vertical-align: top; }
+
+    .factura-fila {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: .3rem 0;
+        font-size: .95rem;
+    }
+
+    .factura-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: .8rem 0;
+        margin-top: .4rem;
+        border-top: 2px solid #000000;
+        border-bottom: 2px solid #000000;
+        font-family: var(--titulo);
+        font-size: 1.45rem;
+        font-weight: 900;
+    }
+
+    .factura-nota {
+        margin-top: 1rem;
+        font-size: .8rem;
+        line-height: 1.6;
+        color: #555555;
+    }
+
+    .factura-gracias {
+        margin-top: 1.2rem;
+        text-align: center;
+        font-size: .8rem;
+        font-weight: 700;
+        color: #555555;
+    }
+
+    @media print {
+        header, .no-print { display: none !important; }
+        body { background: #FFFFFF !important; }
+        .section { padding: 0 !important; }
+        .factura { border: none; max-width: 100%; padding: 0; }
+        .factura-entrega { background: #FFFFFF; }
+    }
+</style>
+
+<header th:replace="~{fragmentos/navbar_cliente :: navbar('pedidos')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="alert-m no-print" role="status" th:if="${mensaje != null}">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${mensaje}">Mensaje</span>
+        </div>
+
+        <!-- ==================== FACTURA ==================== -->
+        <article class="factura">
+
+            <div class="factura-marca">
+                <h2><i class="bi bi-fire me-1"></i>MAGISTRAL</h2>
+                <span>Sabor que conquista</span>
+            </div>
+
+            <div class="factura-datos">
+                <div>
+                    <span>Orden</span>
+                    <strong th:text="${pedido.numeroOrden > 0 ? '#' + pedido.numeroOrden : '-'}">#1</strong>
+                </div>
+                <div>
+                    <span>Fecha</span>
+                    <strong th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2026 12:00</strong>
+                </div>
+                <div>
+                    <span>Estado</span>
+                    <strong th:text="${pedido.estado == 'TOMADO' ? 'Recibido, pendiente de pago' : (pedido.estado == 'PAGADO' ? 'Pagado' : (pedido.estado == 'CANCELADO' ? 'Cancelado' : 'Finalizado'))}">Recibido</strong>
+                </div>
+                <div>
+                    <span>Medio de pago</span>
+                    <strong th:text="${pedido.metodoPagoElegido == 'TARJETA' ? 'Tarjeta' : (pedido.metodoPagoElegido == 'TRANSFERENCIA' ? 'Transferencia' : 'Efectivo (contraentrega)')}">Efectivo</strong>
+                </div>
+            </div>
+
+            <div class="factura-entrega">
+                <div class="titulo">Datos de entrega</div>
+                <div><strong th:text="${pedido.nombreRecibe}">Nombre</strong></div>
+                <div><i class="bi bi-telephone me-1"></i><span th:text="${pedido.telefono}">3001234567</span></div>
+                <div><i class="bi bi-geo-alt me-1"></i><span th:text="${pedido.direccion}">Dirección</span></div>
+            </div>
+
+            <table class="factura-lineas">
+                <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th style="text-align:center;">Cant.</th>
+                    <th style="text-align:right;">Precio</th>
+                    <th style="text-align:right;">Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="linea : ${pedido.items}">
+                    <td th:text="${linea.nombre}">Producto</td>
+                    <td style="text-align:center;" th:text="${linea.cantidad}">1</td>
+                    <td style="text-align:right;"
+                        th:text="'$ ' + ${#numbers.formatDecimal(linea.precioUnitario, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                    <td style="text-align:right;"
+                        th:text="'$ ' + ${#numbers.formatDecimal(linea.subtotal, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="factura-fila mt-3">
+                <span>Subtotal (sin propina)</span>
+                <strong th:text="'$ ' + ${#numbers.formatDecimal(pedido.total, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+            </div>
+
+            <div class="factura-fila">
+                <span>Propina voluntaria (<span th:text="${porcentajePropina}">10</span>%)</span>
+                <strong th:text="'$ ' + ${#numbers.formatDecimal(propinaSugerida, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+            </div>
+
+            <div class="factura-total">
+                <span>Total general</span>
+                <span th:text="'$ ' + ${#numbers.formatDecimal(totalConPropina, 1, 'POINT', 0, 'COMMA')}">$ 0</span>
+            </div>
+
+            <p class="factura-nota" th:if="${pedido.estado == 'TOMADO'}">
+                La propina es voluntaria: puedes pagar solo el subtotal.
+                <span th:if="${pedido.metodoPagoElegido == null or pedido.metodoPagoElegido == 'EFECTIVO'}">
+                    Pagas en efectivo cuando recibas tu pedido.
+                </span>
+            </p>
+
+            <p class="factura-nota" th:if="${pedido.estado == 'CANCELADO'}">
+                Este pedido fue cancelado.
+            </p>
+
+            <p class="factura-gracias">¡Gracias por tu pedido! Te esperamos pronto.</p>
+
+        </article>
+
+        <!-- ==================== ACCIONES (no se imprimen) ==================== -->
+        <div class="d-flex flex-wrap justify-content-center gap-2 mt-4 no-print">
+            <button type="button" class="btn-m" onclick="window.print()">
+                <i class="bi bi-printer"></i> Imprimir factura
+            </button>
+
+            <a class="btn-m-outline" th:href="@{/cliente/pedidos}">
+                <i class="bi bi-receipt"></i> Mis pedidos
+            </a>
+
+            <a class="btn-m-outline" th:href="@{/cliente/menu}">
+                <i class="bi bi-egg-fried"></i> Volver al menú
+            </a>
+        </div>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+
+</body>
+</html>

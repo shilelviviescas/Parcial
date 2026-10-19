@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+<body>
+
+<header class="sticky-top">
+    <nav class="navbar"><div class="container py-1">
+        <a class="navbar-brand" th:href="@{/admin/panel}">
+            <img th:src="@{/img/logo.png}" alt="MAGISTRAL" class="logo-magistral">
+        </a>
+        <a class="nav-link" th:href="@{/logout}"><i class="bi bi-box-arrow-right me-1"></i> Salir</a>
+    </div></nav>
+</header>
+
+<main class="section">
+<div class="container">
+
+    <div class="page-head">
+        <span class="section-kicker">Rol administrador</span>
+        <h1>Panel de administración</h1>
+        <p>Hola, <span th:text="${nombre}">Admin</span>.</p>
+    </div>
+
+    <div class="alert-m" th:if="${mensaje != null}"><i class="bi bi-info-circle-fill"></i> <span th:text="${mensaje}"></span></div>
+    <div class="alert-m" th:if="${error != null}"><i class="bi bi-exclamation-circle-fill"></i> <span th:text="${error}"></span></div>
+
+    <!-- VENTAS -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6"><div class="card-m">
+            <span class="lbl-m">Ventas de hoy</span>
+            <h2 class="fw-bold mb-0">$ <span th:text="${#numbers.formatDecimal(ventasDia,0,'POINT',0,'COMMA')}">0</span></h2>
+            <small class="text-secondary"><span th:text="${pagosDia}">0</span> pagos</small>
+        </div></div>
+        <div class="col-md-6"><div class="card-m">
+            <span class="lbl-m">Ventas del mes</span>
+            <h2 class="fw-bold mb-0">$ <span th:text="${#numbers.formatDecimal(ventasMes,0,'POINT',0,'COMMA')}">0</span></h2>
+            <small class="text-secondary"><span th:text="${pagosMes}">0</span> pagos</small>
+        </div></div>
+    </div>
+
+    <!-- CREAR USUARIO -->
+    <div class="card-m mb-4">
+        <h3 class="fw-bold mb-3">Crear usuario</h3>
+        <form th:action="@{/admin/usuarios/crear}" method="post" class="row g-2">
+            <div class="col-md-3"><input class="form-control" name="nombre" placeholder="Nombre" required></div>
+            <div class="col-md-3"><input class="form-control" type="email" name="correo" placeholder="Correo" required></div>
+            <div class="col-md-2"><input class="form-control" type="password" name="clave" placeholder="Clave (mín. 6)" required></div>
+            <div class="col-md-2">
+                <select class="form-select" name="rol">
+                    <option value="CAJERO">Cajero</option>
+                    <option value="MESERO">Mesero</option>
+                    <option value="CLIENTE">Cliente</option>
+                </select>
+            </div>
+            <div class="col-md-2"><button class="btn-m w-100" type="submit">Crear</button></div>
+        </form>
+    </div>
+
+    <!-- EDITAR DATOS DE FACTURA -->
+    <div class="card-m mb-4" th:if="${editar != null}">
+        <h3 class="fw-bold mb-3">Datos de facturación: <span th:text="${editar.nombre}"></span></h3>
+        <form th:action="@{/admin/usuarios/{id}/actualizar(id=${editar.id})}" method="post" class="row g-2">
+            <div class="col-md-3"><label class="lbl-m">Nombre / razón social</label>
+                <input class="form-control" name="nombre" th:value="${editar.nombre}" required></div>
+            <div class="col-md-3"><label class="lbl-m">Documento / NIT</label>
+                <input class="form-control" name="documento" th:value="${editar.documento}"></div>
+            <div class="col-md-2"><label class="lbl-m">Teléfono</label>
+                <input class="form-control" name="telefono" th:value="${editar.telefono}"></div>
+            <div class="col-md-4"><label class="lbl-m">Dirección</label>
+                <input class="form-control" name="direccion" th:value="${editar.direccion}"></div>
+            <div class="col-12">
+                <button class="btn-m" type="submit">Guardar</button>
+                <a class="btn-m-outline" th:href="@{/admin/panel}">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- USUARIOS -->
+    <div class="card-m mb-4">
+        <h3 class="fw-bold mb-3">Usuarios</h3>
+        <div class="table-responsive">
+        <table class="tabla-m">
+            <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Documento</th><th>Teléfono</th><th>Dirección</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="u : ${usuarios}">
+                <td th:text="${u.nombre}"></td>
+                <td th:text="${u.correo}"></td>
+                <td th:text="${u.rol}"></td>
+                <td th:text="${u.documento}"></td>
+                <td th:text="${u.telefono}"></td>
+                <td th:text="${u.direccion}"></td>
+                <td><a class="btn-m-outline" th:href="@{/admin/panel(editar=${u.id})}">Editar</a></td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+    <!-- APERTURAS Y CIERRES DE CAJA -->
+    <div class="card-m mb-4">
+        <h3 class="fw-bold mb-3">Aperturas y cierres de caja</h3>
+        <div class="table-responsive">
+        <table class="tabla-m">
+            <thead><tr>
+                <th>Cajero</th><th>Estado</th><th>Apertura</th><th class="text-end">Inicial</th>
+                <th>Cierre</th><th class="text-center">Pagos</th>
+                <th class="text-end">Efectivo</th><th class="text-end">Tarjeta</th>
+                <th class="text-end">Transf.</th><th class="text-end">Total</th>
+            </tr></thead>
+            <tbody>
+            <tr th:each="c : ${cajas}">
+                <td th:text="${c.cajeroNombre}"></td>
+                <td th:text="${c.estado}"></td>
+                <td th:text="${#temporals.format(c.fechaApertura,'dd/MM/yyyy HH:mm')}"></td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(c.montoInicial,0,'POINT',0,'COMMA')}"></td>
+                <td th:text="${c.fechaCierre != null ? #temporals.format(c.fechaCierre,'dd/MM/yyyy HH:mm') : '—'}"></td>
+                <td class="text-center" th:text="${c.cantidadPagos}"></td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(c.totalEfectivo,0,'POINT',0,'COMMA')}"></td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(c.totalTarjeta,0,'POINT',0,'COMMA')}"></td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(c.totalTransferencia,0,'POINT',0,'COMMA')}"></td>
+                <td class="text-end fw-bold" th:text="${#numbers.formatDecimal(c.totalVentas,0,'POINT',0,'COMMA')}"></td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+</div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+
+<body>
+
+<style>
+    .resumen .form-select {
+        min-height: 52px;
+        border: 1px solid #CFCFCF;
+        border-radius: 0;
+    }
+
+    .resumen .form-select:focus {
+        border-color: #000000;
+        box-shadow: 0 0 0 .15rem rgba(0,0,0,.12);
+    }
+
+    .resumen textarea.form-control { min-height: 84px; resize: vertical; }
+
+    @media (min-width: 992px) {
+        .resumen { max-height: calc(100vh - 116px); overflow-y: auto; }
+    }
+</style>
+
+<header th:replace="~{fragmentos/navbar_cliente :: navbar('menu')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="page-head">
+            <span class="section-kicker">Pedido a domicilio</span>
+            <h1>Arma tu pedido</h1>
+            <p>Elige tus platos, escribe los datos de entrega y listo.</p>
+        </div>
+
+        <div class="alert-m" role="status" th:if="${mensaje != null}">
+            <i class="bi bi-info-circle-fill"></i>
+            <span th:text="${mensaje}">Mensaje</span>
+        </div>
+
+        <div class="alert-m" role="alert" th:if="${error != null}">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <div class="card-m text-center" th:if="${menu == null or #maps.isEmpty(menu)}">
+            <h3 class="fw-bold">Nuestro menú te espera</h3>
+            <p class="mb-0">En este momento no hay platos disponibles para pedir.</p>
+        </div>
+
+        <form id="formPedido" th:action="@{/cliente/pedidos/guardar}" method="post" novalidate
+              th:if="${menu != null and !#maps.isEmpty(menu)}">
+
+            <div class="row g-4">
+
+                <!-- ==================== MENÚ ==================== -->
+                <div class="col-lg-8">
+
+                    <nav class="cat-nav" aria-label="Categorías del menú">
+                        <a class="cat-pill"
+                           th:each="grupo : ${menu}"
+                           th:with="nombreCat=${grupo.key == 'HAMBURGUESA' ? 'Hamburguesas' : (grupo.key == 'SALCHIPAPA' ? 'Salchipapas' : (grupo.key == 'BEBIDA' ? 'Bebidas' : grupo.key))},
+                                    iconoCat=${grupo.key == 'HAMBURGUESA' ? 'bi-egg-fried' : (grupo.key == 'SALCHIPAPA' ? 'bi-fire' : (grupo.key == 'BEBIDA' ? 'bi-cup-straw' : 'bi-stars'))}"
+                           th:href="'#cat-' + ${#strings.toLowerCase(grupo.key)}"
+                           href="#cat-hamburguesa">
+                            <i th:class="'bi me-1 ' + ${iconoCat}" class="bi bi-egg-fried me-1"></i>
+                            <span th:text="${nombreCat}">Hamburguesas</span>
+                        </a>
+                    </nav>
+
+                    <!-- Un bloque por categoría, con los platos de la base de datos -->
+                    <section class="menu-block"
+                             th:each="grupo : ${menu}"
+                             th:id="'cat-' + ${#strings.toLowerCase(grupo.key)}"
+                             th:with="nombreCat=${grupo.key == 'HAMBURGUESA' ? 'Hamburguesas' : (grupo.key == 'SALCHIPAPA' ? 'Salchipapas' : (grupo.key == 'BEBIDA' ? 'Bebidas' : grupo.key))},
+                                      iconoCat=${grupo.key == 'HAMBURGUESA' ? 'bi-egg-fried' : (grupo.key == 'SALCHIPAPA' ? 'bi-fire' : (grupo.key == 'BEBIDA' ? 'bi-cup-straw' : 'bi-stars'))}"
+                             id="cat-hamburguesa">
+
+                        <div class="menu-block-top">
+                            <h3>
+                                <i th:class="'bi me-2 ' + ${iconoCat}" class="bi bi-egg-fried me-2"></i>
+                                <span th:text="${nombreCat}">Hamburguesas</span>
+                            </h3>
+                            <span class="menu-tag" th:text="${#lists.size(grupo.value)} + ' opciones'">4 opciones</span>
+                        </div>
+
+                        <article class="plato"
+                                 th:each="c : ${grupo.value}"
+                                 th:attr="data-precio=${c.precio},data-nombre=${c.nombre}">
+
+                            <div>
+                                <h4 th:text="${c.nombre}">Plato</h4>
+                                <p th:text="${c.descripcion != null ? c.descripcion : 'Una deliciosa opción para disfrutar.'}">Descripción</p>
+                            </div>
+
+                            <div class="plato-controles">
+                                <span class="plato-precio"
+                                      th:text="'$ ' + ${#numbers.formatDecimal(c.precio, 1, 'POINT', 0, 'COMMA')}">$ 18.900</span>
+
+                                <div class="qty">
+                                    <button type="button" data-accion="menos" aria-label="Quitar uno">−</button>
+                                    <input type="number" min="0" max="99" value="0" readonly
+                                           th:name="'cantidad_' + ${c.id}"
+                                           aria-label="Cantidad">
+                                    <button type="button" data-accion="mas" aria-label="Agregar uno">+</button>
+                                </div>
+                            </div>
+
+                        </article>
+
+                    </section>
+
+                </div>
+
+                <!-- ==================== DATOS DE ENTREGA Y RESUMEN ==================== -->
+                <div class="col-lg-4">
+                    <aside class="resumen">
+
+                        <h3>Tu pedido</h3>
+                        <span class="section-kicker">Datos de entrega</span>
+
+                        <label class="lbl" for="nombreRecibe">Nombre de quien recibe</label>
+                        <input type="text"
+                               class="form-control"
+                               id="nombreRecibe"
+                               name="nombreRecibe"
+                               maxlength="60"
+                               placeholder="Ej: Carlos Pérez"
+                               autocomplete="name"
+                               th:value="${nombreRecibe != null ? nombreRecibe : usuarioNombre}"
+                               required>
+
+                        <label class="lbl" for="telefono">Teléfono</label>
+                        <input type="tel"
+                               class="form-control"
+                               id="telefono"
+                               name="telefono"
+                               maxlength="15"
+                               inputmode="numeric"
+                               placeholder="Ej: 3001234567"
+                               autocomplete="tel"
+                               th:value="${telefono}"
+                               required>
+
+                        <label class="lbl" for="direccion">Dirección de entrega</label>
+                        <textarea class="form-control"
+                                  id="direccion"
+                                  name="direccion"
+                                  maxlength="200"
+                                  placeholder="Calle, número, barrio y referencias"
+                                  autocomplete="street-address"
+                                  th:text="${direccion}"
+                                  required></textarea>
+
+                        <label class="lbl" for="metodoPago">Medio de pago</label>
+                        <select class="form-select" id="metodoPago" name="metodoPago">
+                            <option value="EFECTIVO" th:selected="${metodoPago == null or metodoPago == 'EFECTIVO'}">Efectivo</option>
+                            <option value="TARJETA" th:selected="${metodoPago == 'TARJETA'}">Tarjeta</option>
+                            <option value="TRANSFERENCIA" th:selected="${metodoPago == 'TRANSFERENCIA'}">Transferencia</option>
+                        </select>
+                        <small class="text-secondary d-block mt-1" id="avisoPago">
+                            Pagas en efectivo cuando recibas tu pedido.
+                        </small>
+
+                        <div class="resumen-lista" id="resumenLista" aria-live="polite">
+                            <p class="text-secondary mb-0">Aún no has agregado platos.</p>
+                        </div>
+
+                        <div class="resumen-total">
+                            <span>Total</span>
+                            <span id="resumenTotal">$ 0</span>
+                        </div>
+
+                        <div class="resumen-acciones">
+                            <button type="submit" class="btn-m btn-block" id="btnPedir" disabled>
+                                <i class="bi bi-bag-check"></i> Hacer pedido
+                            </button>
+                            <a class="btn-m-outline btn-block" th:href="@{/cliente/pedidos}">
+                                <i class="bi bi-receipt"></i> Ver mis pedidos
+                            </a>
+                        </div>
+
+                    </aside>
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+
+<script>
+    (function () {
+        const form = document.getElementById('formPedido');
+        if (!form) {
+            return;
+        }
+
+        const platos = document.querySelectorAll('.plato');
+        const lista = document.getElementById('resumenLista');
+        const totalEl = document.getElementById('resumenTotal');
+        const btnPedir = document.getElementById('btnPedir');
+        const nombre = document.getElementById('nombreRecibe');
+        const telefono = document.getElementById('telefono');
+        const direccion = document.getElementById('direccion');
+        const metodo = document.getElementById('metodoPago');
+        const avisoPago = document.getElementById('avisoPago');
+
+        function formato(n) {
+            return '$ ' + Math.round(n).toLocaleString('es-CO');
+        }
+
+        function actualizar() {
+            let total = 0;
+            let hayItems = false;
+            lista.innerHTML = '';
+
+            platos.forEach(function (plato) {
+                const input = plato.querySelector('input');
+                const cantidad = parseInt(input.value, 10) || 0;
+
+                if (cantidad > 0) {
+                    hayItems = true;
+                    const precio = parseFloat(plato.dataset.precio);
+                    total += precio * cantidad;
+
+                    const fila = document.createElement('div');
+                    fila.className = 'resumen-item';
+
+                    const izquierda = document.createElement('span');
+                    izquierda.textContent = cantidad + ' × ' + plato.dataset.nombre;
+
+                    const derecha = document.createElement('strong');
+                    derecha.textContent = formato(precio * cantidad);
+
+                    fila.appendChild(izquierda);
+                    fila.appendChild(derecha);
+                    lista.appendChild(fila);
+                }
+            });
+
+            if (!hayItems) {
+                const vacio = document.createElement('p');
+                vacio.className = 'text-secondary mb-0';
+                vacio.textContent = 'Aún no has agregado platos.';
+                lista.appendChild(vacio);
+            }
+
+            totalEl.textContent = formato(total);
+            btnPedir.disabled = !hayItems;
+        }
+
+        function actualizarAvisoPago() {
+            if (metodo.value === 'EFECTIVO') {
+                avisoPago.textContent = 'Pagas en efectivo cuando recibas tu pedido.';
+            } else if (metodo.value === 'TARJETA') {
+                avisoPago.textContent = 'Pago con tarjeta: se registra en caja con este medio.';
+            } else {
+                avisoPago.textContent = 'Pago por transferencia: se registra en caja con este medio.';
+            }
+        }
+
+        platos.forEach(function (plato) {
+            const input = plato.querySelector('input');
+
+            plato.querySelectorAll('.qty button').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    let valor = parseInt(input.value, 10) || 0;
+                    valor = btn.dataset.accion === 'mas' ? Math.min(99, valor + 1) : Math.max(0, valor - 1);
+                    input.value = valor;
+                    actualizar();
+                });
+            });
+        });
+
+        // El teléfono solo acepta números
+        telefono.addEventListener('input', function () {
+            telefono.value = telefono.value.replace(/[^0-9]/g, '');
+            telefono.classList.remove('is-invalid');
+        });
+
+        nombre.addEventListener('input', function () { nombre.classList.remove('is-invalid'); });
+        direccion.addEventListener('input', function () { direccion.classList.remove('is-invalid'); });
+        metodo.addEventListener('change', actualizarAvisoPago);
+
+        // Antes de enviar se revisan los datos de entrega (el servidor los revisa otra vez)
+        form.addEventListener('submit', function (e) {
+            let primerError = null;
+
+            if (!nombre.value.trim()) {
+                nombre.classList.add('is-invalid');
+                primerError = primerError || nombre;
+            }
+
+            if (telefono.value.length < 7) {
+                telefono.classList.add('is-invalid');
+                primerError = primerError || telefono;
+            }
+
+            if (!direccion.value.trim()) {
+                direccion.classList.add('is-invalid');
+                primerError = primerError || direccion;
+            }
+
+            if (primerError) {
+                e.preventDefault();
+                primerError.focus();
+            }
+        });
+
+        actualizarAvisoPago();
+        actualizar();
+    })();
+</script>
+
+</body>
+</html>

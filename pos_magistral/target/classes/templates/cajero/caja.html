@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+
+<body>
+
+<header th:replace="~{fragmentos/navbar_cajero :: navbar('caja')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="page-head">
+            <span class="section-kicker">Rol cajero</span>
+            <h1>Caja</h1>
+            <p th:if="${cajaActual != null}">La caja está abierta. Aquí ves lo cobrado hasta ahora y puedes cerrarla.</p>
+            <p th:if="${cajaActual == null}">La caja está cerrada. Ábrela con el efectivo inicial para poder cobrar.</p>
+        </div>
+
+        <div class="alert-m" role="status" th:if="${mensaje != null}">
+            <i class="bi bi-info-circle-fill"></i>
+            <span th:text="${mensaje}">Mensaje</span>
+        </div>
+
+        <div class="alert-m" role="alert" th:if="${error != null}">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <!-- ==================== CAJA CERRADA: ABRIR ==================== -->
+        <div class="row" th:if="${cajaActual == null}">
+            <div class="col-lg-6">
+                <div class="card-m">
+
+                    <h3 class="fw-bold mb-1">Abrir caja</h3>
+                    <p class="text-secondary">Escribe el efectivo con el que empieza el turno.</p>
+
+                    <form th:action="@{/cajero/caja/abrir}" method="post">
+
+                        <label class="lbl-m" for="montoInicial">Efectivo inicial</label>
+                        <input type="text"
+                               class="form-control"
+                               id="montoInicial"
+                               name="montoInicial"
+                               inputmode="numeric"
+                               placeholder="Ej: 100000"
+                               autocomplete="off">
+
+                        <button type="submit" class="btn-m btn-block mt-4">
+                            <i class="bi bi-unlock-fill"></i> Abrir caja
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CAJA ABIERTA: RESUMEN Y CIERRE ==================== -->
+        <th:block th:if="${cajaActual != null}">
+
+            <div class="stat-row">
+                <div class="stat">
+                    <strong th:text="'$ ' + ${#numbers.formatDecimal(cajaActual.montoInicial, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                    <span>Efectivo inicial</span>
+                </div>
+                <div class="stat">
+                    <strong th:text="'$ ' + ${#numbers.formatDecimal(totalVentas, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                    <span>Total cobrado</span>
+                </div>
+                <div class="stat">
+                    <strong th:text="${cantidadPagos}">0</strong>
+                    <span>Pagos</span>
+                </div>
+                <div class="stat">
+                    <strong th:text="${pedidosPendientes}">0</strong>
+                    <span>Por cobrar</span>
+                </div>
+            </div>
+
+            <div class="row g-4">
+
+                <!-- Detalle por medio de pago -->
+                <div class="col-lg-7">
+
+                    <div class="tabla-wrap mb-4">
+                        <table class="tabla-m">
+                            <thead>
+                            <tr>
+                                <th>Medio de pago</th>
+                                <th class="text-end">Total cobrado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><i class="bi bi-cash-coin me-2"></i><strong>Efectivo</strong></td>
+                                <td class="text-end"
+                                    th:text="'$ ' + ${#numbers.formatDecimal(totalEfectivo, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-credit-card me-2"></i><strong>Tarjeta</strong></td>
+                                <td class="text-end"
+                                    th:text="'$ ' + ${#numbers.formatDecimal(totalTarjeta, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-phone me-2"></i><strong>Transferencia</strong></td>
+                                <td class="text-end"
+                                    th:text="'$ ' + ${#numbers.formatDecimal(totalTransferencia, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td class="text-end"><strong
+                                        th:text="'$ ' + ${#numbers.formatDecimal(totalVentas, 1, 'POINT', 0, 'COMMA')}">$ 0</strong></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card-m">
+                        <div class="dato-label">Caja abierta por</div>
+                        <div class="dato-valor" th:text="${cajaActual.cajeroNombre}">Cajero</div>
+                        <div class="text-secondary"
+                             th:text="'Desde el ' + ${#temporals.format(cajaActual.fechaApertura, 'dd/MM/yyyy HH:mm')}">Desde el 01/01/2026 08:00</div>
+                    </div>
+
+                </div>
+
+                <!-- Cierre de caja -->
+                <div class="col-lg-5">
+                    <div class="card-m">
+
+                        <h3 class="fw-bold mb-1">Cerrar caja</h3>
+                        <p class="text-secondary">Cuenta el efectivo que hay en la caja y escríbelo para compararlo con lo esperado.</p>
+
+                        <div class="alert-m" th:if="${pedidosPendientes > 0}">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <span th:text="'Todavía hay ' + ${pedidosPendientes} + ' pedido(s) sin cobrar.'">Hay pedidos sin cobrar.</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="dato-label">Efectivo esperado</div>
+                            <div class="dato-valor"
+                                 style="font-family: var(--titulo); font-size: 2rem; font-weight: 900;"
+                                 th:text="'$ ' + ${#numbers.formatDecimal(efectivoEsperado, 1, 'POINT', 0, 'COMMA')}">$ 0</div>
+                            <small class="text-secondary">Efectivo inicial más lo cobrado en efectivo.</small>
+                        </div>
+
+                        <form th:action="@{/cajero/caja/cerrar}" method="post"
+                              onsubmit="return confirm('¿Cerrar la caja? Después de cerrarla no se puede cobrar hasta abrir otra.');">
+
+                            <label class="lbl-m" for="efectivoContado">Efectivo contado</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="efectivoContado"
+                                   name="efectivoContado"
+                                   inputmode="numeric"
+                                   placeholder="Ej: 250000"
+                                   autocomplete="off">
+
+                            <button type="submit" class="btn-m btn-block mt-4">
+                                <i class="bi bi-lock-fill"></i> Cerrar caja
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </th:block>
+
+        <!-- ==================== HISTORIAL ==================== -->
+        <div class="mt-5" th:if="${!#lists.isEmpty(historial)}">
+
+            <h3 class="fw-bold mb-3">Cierres anteriores</h3>
+
+            <div class="tabla-wrap">
+                <table class="tabla-m">
+                    <thead>
+                    <tr>
+                        <th>Apertura</th>
+                        <th>Cierre</th>
+                        <th>Cajero</th>
+                        <th>Total cobrado</th>
+                        <th>Efectivo esperado</th>
+                        <th>Efectivo contado</th>
+                        <th>Resultado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="c : ${historial}">
+                        <td th:text="${#temporals.format(c.fechaApertura, 'dd/MM/yyyy HH:mm')}">01/01/2026 08:00</td>
+                        <td th:text="${c.fechaCierre != null ? #temporals.format(c.fechaCierre, 'dd/MM/yyyy HH:mm') : '-'}">01/01/2026 20:00</td>
+                        <td th:text="${c.cajeroNombre}">Cajero</td>
+                        <td th:text="'$ ' + ${#numbers.formatDecimal(c.totalVentas, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                        <td th:text="'$ ' + ${#numbers.formatDecimal(c.efectivoEsperado, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                        <td th:text="'$ ' + ${#numbers.formatDecimal(c.efectivoContado, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                        <td>
+                            <span class="chip" th:if="${c.diferencia == 0}">Cuadra</span>
+                            <span class="chip negro" th:if="${c.diferencia > 0}"
+                                  th:text="'Sobra $ ' + ${#numbers.formatDecimal(c.diferencia, 1, 'POINT', 0, 'COMMA')}">Sobra</span>
+                            <span class="chip gris" th:if="${c.diferencia < 0}"
+                                  th:text="'Falta $ ' + ${#numbers.formatDecimal(c.diferencia * -1, 1, 'POINT', 0, 'COMMA')}">Falta</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+
+</body>
+</html>
