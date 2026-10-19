@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+
+<body>
+
+<style>
+    .factura {
+        max-width: 460px;
+        margin: 0 auto;
+        padding: 1.8rem;
+        border: 2px solid #000000;
+        background: #FFFFFF;
+    }
+
+    .factura-marca {
+        text-align: center;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px dashed #000000;
+    }
+
+    .factura-marca h2 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 900;
+        letter-spacing: -.05em;
+    }
+
+    .factura-marca span {
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        color: #555555;
+    }
+
+    .factura-datos { font-size: .9rem; line-height: 1.7; margin-bottom: 1rem; }
+    .factura-datos div { display: flex; justify-content: space-between; gap: 1rem; }
+
+    .factura-lineas { width: 100%; font-size: .9rem; border-collapse: collapse; }
+    .factura-lineas th {
+        padding: .5rem 0;
+        border-top: 2px solid #000000;
+        border-bottom: 1px solid #000000;
+        font-size: .7rem;
+        font-weight: 900;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        text-align: left;
+    }
+    .factura-lineas td { padding: .45rem 0; border-bottom: 1px dotted #AAAAAA; vertical-align: top; }
+
+    .factura-fila {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: .3rem 0;
+        font-size: .95rem;
+    }
+
+    .factura-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: .8rem 0;
+        margin-top: .4rem;
+        border-top: 2px solid #000000;
+        border-bottom: 2px solid #000000;
+        font-family: var(--titulo);
+        font-size: 1.45rem;
+        font-weight: 900;
+    }
+
+    .factura-pago {
+        margin-top: 1.2rem;
+        padding: 1rem;
+        border: 1px dashed #000000;
+        background: #F5F5F5;
+        font-size: .9rem;
+    }
+
+    .factura-gracias {
+        margin-top: 1.2rem;
+        text-align: center;
+        font-size: .8rem;
+        font-weight: 700;
+        color: #555555;
+    }
+
+    @media print {
+        header, .no-print { display: none !important; }
+        body { background: #FFFFFF !important; }
+        .section { padding: 0 !important; }
+        .factura { border: none; max-width: 100%; padding: 0; }
+        .factura-pago { background: #FFFFFF; }
+    }
+</style>
+
+<header th:replace="~{fragmentos/navbar_cajero :: navbar('pedidos')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="alert-m no-print" role="status" th:if="${mensaje != null}">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${mensaje}">Mensaje</span>
+        </div>
+
+        <div class="alert-m no-print" role="alert" th:if="${pedidoPendienteId != null}">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>
+                Todavía quedan
+                <strong th:text="'$ ' + ${#numbers.formatDecimal(totalPendiente, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                por cobrar de este pedido.
+                <a class="fw-bold text-decoration-underline"
+                   th:href="@{/cajero/pedidos/{id}/cobrar(id=${pedidoPendienteId}, modo='dividido')}">Cobrar a la siguiente persona</a>
+            </span>
+        </div>
+
+        <!-- ==================== FACTURA DEL CLIENTE ==================== -->
+        <article class="factura">
+
+            <div class="factura-marca">
+                <h2><i class="bi bi-fire me-1"></i>MAGISTRAL</h2>
+                <span>Sabor que conquista</span>
+            </div>
+
+            <div class="factura-datos">
+                <div>
+                    <span>Orden</span>
+                    <strong th:text="${pago.numeroOrden > 0 ? '#' + pago.numeroOrden : '-'}">#1</strong>
+                </div>
+				<div>
+				    <span>Tipo</span>
+				    <strong th:text="${esDomicilio ? 'Domicilio' : 'Mesa ' + pago.numeroMesa}">Mesa 1</strong>
+				</div>
+				<div th:if="${esDomicilio and pedidoDelPago != null}">
+				    <span>Entrega</span>
+				    <strong th:text="${pedidoDelPago.nombreRecibe + ' · ' + pedidoDelPago.telefono}">Nombre</strong>
+				</div>
+				<div th:if="${esDomicilio and pedidoDelPago != null}">
+				    <span>Dirección</span>
+				    <strong th:text="${pedidoDelPago.direccion}">Dirección</strong>
+				</div>
+                <div>
+                    <span>Cliente</span>
+                    <strong th:text="${pago.nombreCliente}">Cliente</strong>
+                </div>
+                <div>
+                    <span>Fecha</span>
+                    <strong th:text="${#temporals.format(pago.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2026 12:00</strong>
+                </div>
+                <div th:if="${pago.cajeroNombre != null}">
+                    <span>Atendió</span>
+                    <strong th:text="${pago.cajeroNombre}">Cajero</strong>
+                </div>
+            </div>
+
+            <table class="factura-lineas">
+                <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th style="text-align:center;">Cant.</th>
+                    <th style="text-align:right;">Precio</th>
+                    <th style="text-align:right;">Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="linea : ${pago.lineas}">
+                    <td th:text="${linea.nombre}">Producto</td>
+                    <td style="text-align:center;" th:text="${linea.cantidad}">1</td>
+                    <td style="text-align:right;"
+                        th:text="'$ ' + ${#numbers.formatDecimal(linea.precioUnitario, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                    <td style="text-align:right;"
+                        th:text="'$ ' + ${#numbers.formatDecimal(linea.subtotal, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="factura-fila mt-3">
+                <span>Subtotal (sin propina)</span>
+                <strong th:text="'$ ' + ${#numbers.formatDecimal(pago.subtotal, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+            </div>
+
+            <div class="factura-fila">
+                <span>Propina voluntaria (<span th:text="${porcentajePropina}">10</span>%)</span>
+                <strong th:text="'$ ' + ${#numbers.formatDecimal(propinaSugerida, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+            </div>
+
+            <div class="factura-total">
+                <span>Total general</span>
+                <span th:text="'$ ' + ${#numbers.formatDecimal(totalConPropina, 1, 'POINT', 0, 'COMMA')}">$ 0</span>
+            </div>
+
+            <div class="factura-pago">
+                <div class="factura-fila">
+                    <span>Medio de pago</span>
+                    <strong th:text="${pago.metodo == 'EFECTIVO' ? 'Efectivo' : (pago.metodo == 'TARJETA' ? 'Tarjeta' : 'Transferencia')}">Efectivo</strong>
+                </div>
+
+                <div class="factura-fila" th:if="${pago.metodo == 'EFECTIVO'}">
+                    <span>Recibido</span>
+                    <strong th:text="'$ ' + ${#numbers.formatDecimal(pago.recibido, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                </div>
+
+                <div class="factura-fila" th:if="${pago.metodo == 'EFECTIVO'}">
+                    <span>Vueltos</span>
+                    <strong th:text="'$ ' + ${#numbers.formatDecimal(pago.devuelto, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                </div>
+
+                <div class="factura-fila">
+                    <span>Total cobrado</span>
+                    <strong th:text="'$ ' + ${#numbers.formatDecimal(pago.total, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                </div>
+
+                <div class="factura-fila" th:if="${pago.conPropina}">
+                    <span>Incluye propina</span>
+                    <strong th:text="'$ ' + ${#numbers.formatDecimal(pago.propina, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                </div>
+
+                <div class="factura-fila" th:unless="${pago.conPropina}">
+                    <span>Propina</span>
+                    <strong>No incluida</strong>
+                </div>
+            </div>
+
+            <p class="factura-gracias">¡Gracias por tu visita! Te esperamos pronto.</p>
+
+        </article>
+
+        <!-- ==================== ACCIONES (no se imprimen) ==================== -->
+        <div class="d-flex flex-wrap justify-content-center gap-2 mt-4 no-print">
+            <button type="button" class="btn-m" onclick="window.print()">
+                <i class="bi bi-printer"></i> Imprimir factura
+            </button>
+
+            <a class="btn-m-outline"
+               th:if="${pedidoPendienteId != null}"
+               th:href="@{/cajero/pedidos/{id}/cobrar(id=${pedidoPendienteId}, modo='dividido')}">
+                <i class="bi bi-people"></i> Cobrar a la siguiente persona
+            </a>
+
+            <a class="btn-m-outline" th:href="@{/cajero/pedidos}">
+                <i class="bi bi-arrow-left"></i> Volver a los pedidos
+            </a>
+        </div>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+
+<body>
+
+<header th:replace="~{fragmentos/navbar_mesero :: navbar('pedidos')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="page-head">
+            <span class="section-kicker">
+                Orden <span th:text="${pedido.numeroOrden > 0 ? '#' + pedido.numeroOrden : '-'}">#1</span>
+                · Mesa <span th:text="${pedido.numeroMesa}">1</span>
+            </span>
+            <h1 th:text="${pedido.nombreCliente}">Cliente</h1>
+            <p th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2026 12:00</p>
+        </div>
+
+        <div class="alert-m" role="status" th:if="${mensaje != null}">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${mensaje}">Mensaje</span>
+        </div>
+
+        <div class="alert-m" role="alert" th:if="${error != null}">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- DETALLE DE PLATOS -->
+            <div class="col-lg-8">
+                <div class="tabla-wrap">
+                    <table class="tabla-m">
+                        <thead>
+                        <tr>
+                            <th>Plato</th>
+                            <th class="text-center">Cant.</th>
+                            <th class="text-center">Pagadas</th>
+                            <th>Precio</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${pedido.items}">
+                            <td><strong th:text="${item.nombre}">Plato</strong></td>
+                            <td class="text-center" th:text="${item.cantidad}">1</td>
+                            <td class="text-center" th:text="${item.cantidadPagada}">0</td>
+                            <td th:text="'$ ' + ${#numbers.formatDecimal(item.precioUnitario, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                            <td class="text-end"
+                                th:text="'$ ' + ${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ESTADO, TOTAL Y ACCIONES -->
+            <div class="col-lg-4">
+                <div class="card-m">
+
+                    <div class="mb-3">
+                        <div class="dato-label">Estado</div>
+                        <span class="chip"
+                              th:classappend="${pedido.estado == 'TOMADO'} ? 'negro' : (${pedido.estado == 'CANCELADO'} ? 'gris')"
+                              th:text="${pedido.estado == 'TOMADO' ? 'Por cobrar' : (pedido.estado == 'PAGADO' ? 'Pagado' : (pedido.estado == 'CANCELADO' ? 'Cancelado' : 'Finalizado'))}">Por cobrar</span>
+                        <span class="chip ms-1"
+                              th:if="${pedido.estado == 'TOMADO' and pedido.totalPendiente < pedido.total}">Pago parcial</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="dato-label">Total</div>
+                        <div class="dato-valor"
+                             th:style="${pedido.estado == 'CANCELADO'} ? 'font-family: var(--titulo); font-size: 2rem; font-weight: 900; text-decoration: line-through; color: #777777;' : 'font-family: var(--titulo); font-size: 2rem; font-weight: 900;'"
+                             th:text="'$ ' + ${#numbers.formatDecimal(pedido.total, 1, 'POINT', 0, 'COMMA')}">$ 0</div>
+                    </div>
+
+                    <div class="mb-3" th:if="${pedido.estado == 'TOMADO' and pedido.totalPendiente < pedido.total}">
+                        <div class="dato-label">Por cobrar</div>
+                        <div class="dato-valor"
+                             th:text="'$ ' + ${#numbers.formatDecimal(pedido.totalPendiente, 1, 'POINT', 0, 'COMMA')}">$ 0</div>
+                    </div>
+
+                    <p class="text-secondary" th:if="${pedido.estado == 'TOMADO'}">
+                        El cajero cobra este pedido. Si el cliente se va sin pedir, puedes cancelarlo.
+                    </p>
+
+                    <p class="text-secondary" th:if="${pedido.estado == 'PAGADO' and mesaOcupada}">
+                        El cliente ya pagó y la mesa sigue ocupada. Libérala cuando se vaya.
+                    </p>
+
+                    <p class="text-secondary" th:if="${pedido.estado == 'PAGADO' and !mesaOcupada}">
+                        El cliente ya pagó y la mesa está libre.
+                    </p>
+
+                    <div class="d-flex flex-column gap-2">
+
+                        <!-- Pedido pagado con la mesa todavía ocupada -->
+                        <form th:if="${pedido.estado == 'PAGADO' and mesaOcupada}"
+                              th:action="@{/mesero/pedidos/{id}/liberar-mesa(id=${pedido.id})}"
+                              method="post">
+                            <button type="submit" class="btn-m btn-block">
+                                <i class="bi bi-door-open"></i> Liberar mesa
+                            </button>
+                        </form>
+
+                        <!-- Solo se cancela un pedido activo que todavía no tiene pagos -->
+                        <form th:if="${pedido.estado == 'TOMADO' and pedido.totalPendiente >= pedido.total}"
+                              th:action="@{/mesero/pedidos/{id}/cancelar(id=${pedido.id})}"
+                              method="post"
+                              onsubmit="return confirm('¿Seguro que quieres cancelar este pedido? No contará como venta.');">
+                            <button type="submit" class="btn-m-outline btn-block">
+                                <i class="bi bi-x-circle"></i> Cancelar pedido
+                            </button>
+                        </form>
+
+                        <a class="btn-m-outline btn-block" th:href="@{/mesero/mesas}">
+                            <i class="bi bi-arrow-left"></i> Volver a las mesas
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+
+</body>
+</html>

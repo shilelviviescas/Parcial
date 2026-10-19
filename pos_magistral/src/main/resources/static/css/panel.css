@@ -1,0 +1,438 @@
+:root {
+    --negro: #000000;
+    --blanco: #FFFFFF;
+    --gris: #777777;
+    --gris-claro: #E8E8E8;
+    --fondo: #F5F5F5;
+    --titulo: 'Outfit', sans-serif;
+    --texto: 'DM Sans', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 85px; }
+
+body {
+    margin: 0;
+    color: var(--negro);
+    background: var(--fondo);
+    font-family: var(--texto);
+}
+
+h1, h2, h3, h4, h5, .navbar-brand { font-family: var(--titulo); }
+
+a { color: inherit; text-decoration: none; }
+
+img { display: block; max-width: 100%; }
+
+/* NAVEGACIÓN */
+
+.navbar { background: var(--negro); padding: 12px 0; border: none; }
+
+.logo-magistral {
+    display: block;
+    width: 175px;
+    height: 52px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.navbar-toggler { border: 1px solid #FFFFFF; box-shadow: none !important; }
+.navbar-toggler-icon { filter: invert(1); }
+
+.nav-link {
+    color: #FFFFFF !important;
+    font-size: .91rem;
+    font-weight: 700;
+    margin: 0 .4rem;
+    transition: opacity .2s;
+}
+
+.nav-link:hover { opacity: .65; }
+
+.nav-link.active {
+    opacity: 1;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+    text-decoration-thickness: 2px;
+}
+
+/* BOTONES */
+
+.btn-m, .btn-m-outline {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: .55rem;
+    padding: .8rem 1.3rem;
+    border: 2px solid #000000;
+    border-radius: 4px;
+    font-family: var(--texto);
+    font-weight: 800;
+    font-size: .92rem;
+    cursor: pointer;
+    transition: background .2s, color .2s, transform .2s;
+}
+
+.btn-m { background: #000000; color: #FFFFFF; }
+.btn-m:hover { background: #FFFFFF; color: #000000; transform: translateY(-2px); }
+
+.btn-m-outline { background: #FFFFFF; color: #000000; }
+.btn-m-outline:hover { background: #000000; color: #FFFFFF; transform: translateY(-2px); }
+
+.btn-m:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+.btn-block { width: 100%; }
+
+/* ENCABEZADOS */
+
+.section { padding: 3.5rem 0 4.5rem; }
+
+.page-head { margin-bottom: 2rem; }
+
+.section-kicker {
+    color: #000000;
+    font-size: .75rem;
+    font-weight: 900;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.page-head h1 {
+    margin: .6rem 0 .6rem;
+    font-size: clamp(2.3rem, 5vw, 3.6rem);
+    font-weight: 900;
+    letter-spacing: -.06em;
+}
+
+.page-head p { margin: 0; color: #555555; line-height: 1.7; }
+
+/* ALERTAS */
+
+.alert-m {
+    display: flex;
+    gap: .7rem;
+    align-items: center;
+    padding: .9rem 1rem;
+    margin-bottom: 1.4rem;
+    border: 1px solid #D5D5D5;
+    border-left: 4px solid #000000;
+    background: #FFFFFF;
+    color: #000000;
+    font-weight: 600;
+}
+
+/* RESUMEN DE MESAS */
+
+.stat-row { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.8rem; }
+
+.stat {
+    min-width: 150px;
+    padding: 1rem 1.3rem;
+    border: 2px solid #000000;
+    background: #FFFFFF;
+}
+
+.stat strong {
+    display: block;
+    font-family: var(--titulo);
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.stat span {
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #555555;
+}
+
+/* MESAS */
+
+.mesa-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 1rem;
+}
+
+.mesa-card {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    min-height: 300px;
+    padding: 1.3rem;
+    border: 2px solid #000000;
+    background: #FFFFFF;
+    color: #000000;
+    transition: transform .2s;
+}
+
+.mesa-card:hover { transform: translateY(-4px); }
+
+.mesa-card.ocupada { background: #000000; color: #FFFFFF; }
+
+.mesa-label {
+    font-size: .75rem;
+    font-weight: 900;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.mesa-tag {
+    padding: .3rem .65rem;
+    border: 1px solid currentColor;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.mesa-card.ocupada .mesa-tag { background: #FFFFFF; color: #000000; border-color: #FFFFFF; }
+
+.mesa-num {
+    font-family: var(--titulo);
+    font-size: 4.6rem;
+    font-weight: 900;
+    letter-spacing: -.06em;
+    line-height: 1;
+    margin: .3rem 0 0;
+}
+
+.mesa-puestos {
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #777777;
+}
+
+.mesa-card.ocupada .mesa-puestos { color: #D0D0D0; }
+
+.mesa-info { flex: 1; font-size: .88rem; line-height: 1.5; min-height: 2.6rem; margin-top: .4rem; }
+.mesa-info small { display: block; opacity: .75; }
+
+.mesa-actions { display: flex; flex-direction: column; gap: .5rem; }
+
+.mesa-card.ocupada .btn-m { background: #FFFFFF; color: #000000; border-color: #FFFFFF; }
+.mesa-card.ocupada .btn-m:hover { background: #000000; color: #FFFFFF; }
+.mesa-card.ocupada .btn-m-outline { background: transparent; color: #FFFFFF; border-color: #FFFFFF; }
+.mesa-card.ocupada .btn-m-outline:hover { background: #FFFFFF; color: #000000; }
+
+/* TOMA DE PEDIDO */
+
+.cat-nav {
+    position: sticky;
+    top: 76px;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+    padding: .8rem 0;
+    margin-bottom: 1.2rem;
+    background: #F5F5F5;
+}
+
+.cat-pill {
+    padding: .6rem 1.1rem;
+    border: 1px solid #000000;
+    background: #FFFFFF;
+    color: #000000;
+    font-weight: 800;
+    font-size: .88rem;
+    transition: background .2s, color .2s;
+}
+
+.cat-pill:hover { background: #000000; color: #FFFFFF; }
+
+.menu-block { margin-bottom: 1.8rem; background: #FFFFFF; scroll-margin-top: 150px; }
+
+.menu-block-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.4rem;
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.menu-block-top h3 { margin: 0; font-size: 1.35rem; font-weight: 900; }
+
+.menu-block-top .menu-tag {
+    padding: .35rem .7rem;
+    background: #FFFFFF;
+    color: #000000;
+    font-size: .78rem;
+    font-weight: 800;
+}
+
+.plato {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid #D9D9D9;
+}
+
+.plato:last-child { border-bottom: none; }
+
+.plato h4 { margin: 0 0 .25rem; font-size: 1.15rem; font-weight: 900; }
+.plato p { margin: 0; color: #555555; font-size: .9rem; line-height: 1.5; }
+
+.plato-precio { font-family: var(--titulo); font-weight: 900; font-size: 1.15rem; white-space: nowrap; }
+
+.plato-controles { display: flex; flex-direction: column; align-items: flex-end; gap: .5rem; }
+
+.qty { display: inline-flex; border: 2px solid #000000; }
+
+.qty button {
+    width: 38px;
+    height: 38px;
+    border: 0;
+    background: #000000;
+    color: #FFFFFF;
+    font-size: 1.2rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.qty button:hover { background: #333333; }
+
+.qty input {
+    width: 48px;
+    border: 0;
+    background: #FFFFFF;
+    color: #000000;
+    text-align: center;
+    font-weight: 800;
+}
+
+.qty input:focus { outline: none; }
+
+.vacio { padding: 1.4rem; margin: 0; color: #555555; }
+
+/* RESUMEN LATERAL */
+
+.resumen {
+    position: sticky;
+    top: 96px;
+    padding: 1.5rem;
+    border: 2px solid #000000;
+    background: #FFFFFF;
+}
+
+.resumen h3 { font-size: 1.5rem; font-weight: 900; margin: 0 0 .2rem; }
+
+.resumen .form-control {
+    min-height: 52px;
+    border: 1px solid #CFCFCF;
+    border-radius: 0;
+}
+
+.resumen .form-control:focus { border-color: #000000; box-shadow: 0 0 0 .15rem rgba(0,0,0,.12); }
+
+.resumen label.lbl {
+    display: block;
+    margin: 1rem 0 .4rem;
+    font-size: .75rem;
+    font-weight: 900;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.resumen-lista { min-height: 60px; margin: 1rem 0; border-top: 1px solid #D9D9D9; padding-top: .8rem; }
+
+.resumen-item { display: flex; justify-content: space-between; gap: .8rem; padding: .35rem 0; font-size: .9rem; }
+
+.resumen-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: .9rem 0;
+    margin-bottom: 1rem;
+    border-top: 2px solid #000000;
+    font-family: var(--titulo);
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.resumen-acciones { display: flex; flex-direction: column; gap: .6rem; }
+
+/* TABLAS */
+
+.tabla-m { width: 100%; background: #FFFFFF; border-collapse: collapse; }
+
+.tabla-m th {
+    padding: 1rem 1.1rem;
+    background: #000000;
+    color: #FFFFFF;
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.tabla-m td { padding: 1rem 1.1rem; border-bottom: 1px solid #D9D9D9; vertical-align: middle; }
+
+.tabla-wrap { overflow-x: auto; border: 1px solid #D9D9D9; }
+
+.chip {
+    display: inline-block;
+    padding: .25rem .6rem;
+    border: 1px solid #000000;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.chip.negro { background: #000000; color: #FFFFFF; }
+
+.card-m { padding: 1.6rem; border: 2px solid #000000; background: #FFFFFF; }
+
+.dato-label { font-size: .72rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: #777777; }
+.dato-valor { font-size: 1.15rem; font-weight: 800; }
+
+:focus-visible { outline: 3px solid #777777; outline-offset: 3px; }
+
+@media (max-width: 575px) {
+    .logo-magistral { width: 145px; height: 45px; }
+    .section { padding: 2.5rem 0 3.5rem; }
+    .plato { flex-direction: column; align-items: flex-start; }
+    .plato-controles { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
+    .resumen { position: static; }
+    .cat-nav { top: 70px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+/* FORMULARIOS DENTRO DE TARJETAS (caja, cobro) */
+
+.card-m .form-control,
+.card-m .form-select {
+    min-height: 52px;
+    border: 1px solid #CFCFCF;
+    border-radius: 0;
+}
+
+.card-m .form-control:focus,
+.card-m .form-select:focus {
+    border-color: #000000;
+    box-shadow: 0 0 0 .15rem rgba(0,0,0,.12);
+}
+
+label.lbl-m {
+    display: block;
+    margin: 1rem 0 .4rem;
+    font-size: .75rem;
+    font-weight: 900;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+.chip.gris { background: #E8E8E8; color: #555555; border-color: #777777; text-decoration: line-through; }

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+<body>
+
+<header th:replace="~{fragmentos/navbar_cajero :: navbar('pedidos')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="page-head d-flex flex-wrap justify-content-between align-items-end gap-3">
+            <div>
+                <span class="section-kicker">Rol cajero</span>
+                <h1>Pedidos por cobrar</h1>
+                <p>Los pedidos de mesa y los de domicilio llegan separados.</p>
+            </div>
+            <a class="btn-m-outline" th:href="@{/cajero/pedidos}"><i class="bi bi-arrow-clockwise"></i> Actualizar</a>
+        </div>
+
+        <div class="alert-m" role="status" th:if="${mensaje != null}">
+            <i class="bi bi-info-circle-fill"></i><span th:text="${mensaje}">Mensaje</span>
+        </div>
+        <div class="alert-m" role="alert" th:if="${error != null}">
+            <i class="bi bi-exclamation-circle-fill"></i><span th:text="${error}">Error</span>
+        </div>
+        <div class="alert-m" role="alert" th:if="${!cajaAbierta}">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>La caja está cerrada y no se puede cobrar.
+                <a class="fw-bold text-decoration-underline" th:href="@{/cajero/caja}">Abrir caja</a></span>
+        </div>
+
+        <!-- ==================== PEDIDOS DE MESA ==================== -->
+        <h3 class="fw-bold mb-3">
+            <i class="bi bi-grid-3x3-gap-fill me-2"></i>Pedidos de mesa
+            <span class="chip negro ms-2" th:text="${#lists.size(pedidos)}">0</span>
+        </h3>
+
+        <div class="tabla-wrap" th:if="${!#lists.isEmpty(pedidos)}">
+            <table class="tabla-m">
+                <thead>
+                <tr><th>Orden</th><th>Mesa</th><th>Cliente</th><th>Hora</th><th>Total</th><th>Por cobrar</th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${pedidos}">
+                    <td><strong th:text="${p.numeroOrden > 0 ? '#' + p.numeroOrden : '-'}">#1</strong></td>
+                    <td><strong th:text="${p.numeroMesa}">1</strong></td>
+                    <td th:text="${p.nombreCliente}">Cliente</td>
+                    <td th:text="${#temporals.format(p.fecha, 'HH:mm')}">12:00</td>
+                    <td th:text="'$ ' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                    <td>
+                        <strong th:text="'$ ' + ${#numbers.formatDecimal(p.totalPendiente, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                        <span class="chip ms-1" th:if="${p.totalPendiente < p.total}">Pago parcial</span>
+                    </td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-2 justify-content-end">
+                            <a class="btn-m" th:href="@{/cajero/pedidos/{id}/cobrar(id=${p.id}, modo='total')}">
+                                <i class="bi bi-cash-coin"></i> Cobrar total</a>
+                            <a class="btn-m-outline" th:href="@{/cajero/pedidos/{id}/cobrar(id=${p.id}, modo='dividido')}">
+                                <i class="bi bi-people"></i> Cobrar dividida</a>
+                            <a class="btn-m-outline" th:href="@{/cajero/pedidos/{id}/comanda(id=${p.id})}" target="_blank">
+                                <i class="bi bi-printer"></i> Comanda</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-m text-center" th:if="${#lists.isEmpty(pedidos)}">
+            <p class="mb-0">No hay pedidos de mesa por cobrar.</p>
+        </div>
+
+        <!-- ==================== PEDIDOS A DOMICILIO ==================== -->
+        <h3 class="fw-bold mb-3 mt-5">
+            <i class="bi bi-bicycle me-2"></i>Pedidos a domicilio
+            <span class="chip negro ms-2" th:text="${#lists.size(pedidosDomicilio)}">0</span>
+        </h3>
+
+        <div class="tabla-wrap" th:if="${!#lists.isEmpty(pedidosDomicilio)}">
+            <table class="tabla-m">
+                <thead>
+                <tr><th>Orden</th><th>Recibe</th><th>Teléfono</th><th>Dirección</th><th>Pago</th><th>Hora</th><th>Total</th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${pedidosDomicilio}">
+                    <td>
+                        <strong th:text="${p.numeroOrden > 0 ? '#' + p.numeroOrden : '-'}">#1</strong>
+                        <span class="chip negro ms-1">Domicilio</span>
+                    </td>
+                    <td th:text="${p.nombreRecibe}">Nombre</td>
+                    <td th:text="${p.telefono}">3001234567</td>
+                    <td th:text="${p.direccion}">Dirección</td>
+                    <td><span class="chip"
+                              th:text="${p.metodoPagoElegido == 'TARJETA' ? 'Tarjeta' : (p.metodoPagoElegido == 'TRANSFERENCIA' ? 'Transferencia' : 'Efectivo')}">Efectivo</span></td>
+                    <td th:text="${#temporals.format(p.fecha, 'HH:mm')}">12:00</td>
+                    <td><strong th:text="'$ ' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 0, 'COMMA')}">$ 0</strong></td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-2 justify-content-end">
+                            <a class="btn-m" th:href="@{/cajero/pedidos/{id}/cobrar(id=${p.id}, modo='total')}">
+                                <i class="bi bi-cash-coin"></i> Cobrar</a>
+                            <a class="btn-m-outline" th:href="@{/cajero/pedidos/{id}/comanda(id=${p.id})}" target="_blank">
+                                <i class="bi bi-printer"></i> Comanda</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-m text-center" th:if="${#lists.isEmpty(pedidosDomicilio)}">
+            <p class="mb-0">No hay pedidos a domicilio por cobrar.</p>
+        </div>
+
+        <!-- ==================== PAGADOS CON LA MESA OCUPADA ==================== -->
+        <div class="mt-5" th:if="${!#lists.isEmpty(pagadosConMesa)}">
+            <h3 class="fw-bold mb-1">Pagados con la mesa todavía ocupada</h3>
+            <p class="text-secondary mb-3">Estos clientes ya pagaron y siguen sentados. Libera la mesa cuando se vayan.</p>
+
+            <div class="tabla-wrap">
+                <table class="tabla-m">
+                    <thead><tr><th>Orden</th><th>Mesa</th><th>Cliente</th><th>Total</th><th></th></tr></thead>
+                    <tbody>
+                    <tr th:each="p : ${pagadosConMesa}">
+                        <td><strong th:text="${p.numeroOrden > 0 ? '#' + p.numeroOrden : '-'}">#1</strong></td>
+                        <td><strong th:text="${p.numeroMesa}">1</strong></td>
+                        <td th:text="${p.nombreCliente}">Cliente</td>
+                        <td th:text="'$ ' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                        <td class="text-end">
+                            <form th:action="@{/cajero/pedidos/{id}/liberar-mesa(id=${p.id})}" method="post">
+                                <button type="submit" class="btn-m"><i class="bi bi-door-open"></i> Liberar mesa</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+</body>
+</html>

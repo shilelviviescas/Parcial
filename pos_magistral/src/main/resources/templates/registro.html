@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crear cuenta | MAGISTRAL</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+.fondo-negro { background: #080808; min-height: 100vh; }
+.registro-logo { height: 90px; width: auto; }
+.tarjeta-registro { background: #fff; border-radius: 18px; padding: 2rem; width: 100%; max-width: 440px; box-shadow: 0 12px 35px rgba(0,0,0,.25); }
+.tarjeta-registro h1 { font-size: 1.7rem; font-weight: 800; margin-bottom: .4rem; }
+.ayuda-inicial { color: #686868; font-size: .92rem; margin-bottom: 1.2rem; }
+.aviso { display: flex; gap: .6rem; align-items: center; background: #fdecec; color: #a12626; border-radius: 12px; padding: .7rem 1rem; margin-bottom: 1rem; font-size: .92rem; }
+.campo { position: relative; margin-bottom: 1rem; }
+.campo .icono { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #686868; z-index: 5; }
+.campo .form-control { padding-left: 2.6rem; border-radius: 12px; }
+.campo.form-floating > label { padding-left: 2.6rem; }
+.campo-ayuda { color: #686868; font-size: .82rem; margin: -.4rem 0 1rem; }
+.boton-entrar { width: 100%; border: 0; border-radius: 12px; padding: .85rem; background: #080808; color: #fff; font-weight: 700; }
+.boton-entrar:hover { background: #2a2a2a; }
+.volver { text-align: center; color: #686868; font-size: .92rem; }
+.volver a { color: #080808; font-weight: 700; }
+</style>
+</head>
+<body class="fondo-negro">
+  <main class="container py-5 d-flex flex-column align-items-center gap-4">
+    <a th:href="@{/}"><img class="registro-logo" th:src="@{/img/logo.png}" alt="MAGISTRAL, cocina irresistible"></a>
+
+    <section class="tarjeta-registro">
+      <h1>Crea tu cuenta</h1>
+      <p class="ayuda-inicial">Es para clientes. El personal del restaurante recibe su acceso del administrador.</p>
+
+      <div class="aviso" role="alert" th:if="${error != null}">
+        <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+        <span th:text="${error}">Ese correo ya tiene una cuenta. Prueba iniciando sesión.</span>
+      </div>
+
+      <form th:action="@{/registro}" method="post" novalidate>
+        <div class="campo form-floating">
+          <i class="bi bi-person icono" aria-hidden="true"></i>
+          <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre"
+                 autocomplete="name" required autofocus th:value="${nombre}">
+          <label for="nombre">Tu nombre</label>
+        </div>
+
+        <div class="campo form-floating">
+          <i class="bi bi-envelope icono" aria-hidden="true"></i>
+          <input type="email" class="form-control" id="correo" name="correo" placeholder="Correo"
+                 autocomplete="username" required th:value="${correo}">
+          <label for="correo">Correo electrónico</label>
+        </div>
+
+        <div class="campo form-floating">
+          <i class="bi bi-lock icono" aria-hidden="true"></i>
+          <input type="password" class="form-control" id="clave" name="clave" placeholder="Clave"
+                 autocomplete="new-password" minlength="6" required>
+          <label for="clave">Clave</label>
+        </div>
+        <div class="campo form-floating">
+          <i class="bi bi-lock-fill icono" aria-hidden="true"></i>
+          <input type="password" class="form-control" id="confirmarClave" name="confirmarClave" placeholder="Confirmar clave"
+                 autocomplete="new-password" minlength="6" required>
+          <label for="confirmarClave">Confirmar clave</label>
+        </div>
+        <p class="campo-ayuda">Mínimo 6 caracteres.</p>
+
+        <button type="submit" class="boton-entrar">Crear cuenta</button>
+      </form>
+
+      <p class="volver mt-4 mb-0">¿Ya tienes cuenta? <a th:href="@{/}">Inicia sesión</a></p>
+    </section>
+  </main>
+</body>
+</html>

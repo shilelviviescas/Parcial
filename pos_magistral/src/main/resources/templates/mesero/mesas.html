@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+
+<body>
+
+<header th:replace="~{fragmentos/navbar_mesero :: navbar('mesas')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="page-head">
+            <span class="section-kicker">Rol mesero</span>
+            <h1>Mesas del restaurante</h1>
+            <p>Elige una mesa libre para empezar a tomar el pedido.</p>
+        </div>
+
+        <div class="alert-m" role="status" th:if="${mensaje != null}">
+            <i class="bi bi-info-circle-fill"></i>
+            <span th:text="${mensaje}">Mensaje</span>
+        </div>
+
+        <div class="alert-m" role="alert" th:if="${error != null}">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <div class="stat-row">
+            <div class="stat">
+                <strong th:text="${libres}">0</strong>
+                <span>Libres</span>
+            </div>
+            <div class="stat">
+                <strong th:text="${ocupadas}">0</strong>
+                <span>Ocupadas</span>
+            </div>
+            <div class="stat">
+                <strong th:text="${#lists.size(mesas)}">0</strong>
+                <span>Total</span>
+            </div>
+        </div>
+
+        <div class="mesa-grid" th:if="${!#lists.isEmpty(mesas)}">
+
+            <article class="mesa-card"
+                     th:each="mesa : ${mesas}"
+                     th:classappend="${mesa.estado == 'OCUPADA'} ? 'ocupada'">
+
+                <div class="d-flex justify-content-between align-items-start">
+                    <span class="mesa-label">Mesa</span>
+                    <span class="mesa-tag"
+                          th:text="${mesa.estado == 'OCUPADA' ? 'Ocupada' : 'Libre'}">Libre</span>
+                </div>
+
+                <div class="mesa-num" th:text="${mesa.numero}">1</div>
+
+                <div class="mesa-puestos">
+                    <i class="bi bi-people-fill me-1"></i>
+                    <span th:text="${mesa.capacidad} + ' puestos'">4 puestos</span>
+                </div>
+
+                <div class="mesa-info" th:with="p=${pedidosPorMesa[mesa.id]}">
+                    <th:block th:if="${p != null}">
+                        <strong th:text="${p.nombreCliente}">Cliente</strong>
+                        <small th:text="'$ ' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 0, 'COMMA')}">$ 0</small>
+                    </th:block>
+                    <small th:if="${p == null and mesa.estado == 'OCUPADA'}">Tomando pedido…</small>
+                </div>
+
+                <div class="mesa-actions">
+
+                    <!-- Mesa libre -->
+                    <form th:if="${mesa.estado != 'OCUPADA'}"
+                          th:action="@{/mesero/mesas/{id}/ocupar(id=${mesa.id})}"
+                          method="post">
+                        <button type="submit" class="btn-m btn-block">
+                            <i class="bi bi-journal-plus"></i> Tomar pedido
+                        </button>
+                    </form>
+
+                    <!-- Mesa ocupada con pedido -->
+                    <a th:if="${mesa.estado == 'OCUPADA' and mesa.pedidoActualId != null}"
+                       class="btn-m btn-block"
+                       th:href="@{/mesero/pedidos/{id}(id=${mesa.pedidoActualId})}">
+                        <i class="bi bi-receipt"></i> Ver pedido
+                    </a>
+
+                    <!-- Mesa ocupada sin pedido todavía -->
+                    <th:block th:if="${mesa.estado == 'OCUPADA' and mesa.pedidoActualId == null}">
+                        <a class="btn-m btn-block"
+                           th:href="@{/mesero/pedidos/nuevo/{id}(id=${mesa.id})}">
+                            <i class="bi bi-journal-plus"></i> Continuar pedido
+                        </a>
+
+                        <form th:action="@{/mesero/mesas/{id}/liberar(id=${mesa.id})}" method="post">
+                            <button type="submit" class="btn-m-outline btn-block">
+                                <i class="bi bi-x-lg"></i> Liberar mesa
+                            </button>
+                        </form>
+                    </th:block>
+
+                </div>
+            </article>
+
+        </div>
+
+        <div class="card-m text-center" th:if="${#lists.isEmpty(mesas)}">
+            <h3 class="fw-bold">No hay mesas registradas</h3>
+            <p class="mb-0">Reinicia el proyecto para que se creen las mesas iniciales.</p>
+        </div>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+
+</body>
+</html> 	

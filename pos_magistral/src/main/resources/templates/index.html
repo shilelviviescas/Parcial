@@ -1,0 +1,1544 @@
+
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title th:text="${titulo} ?: 'MAGISTRAL | Sabor que conquista'">MAGISTRAL | Sabor que conquista</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+--black: #080808;
+--white: #ffffff;
+--gray: #686868;
+--light: #f6f6f4;
+--line: #e9e9e7;
+--font-title: 'Outfit', sans-serif;
+--font-text: 'DM Sans', sans-serif;
+--radius: 18px;
+--shadow: 0 12px 35px rgba(0, 0, 0, .07);
+}
+* {
+box-sizing: border-box;
+}
+html {
+scroll-behavior: smooth;
+scroll-padding-top: 95px;
+}
+body {
+margin: 0;
+color: var(--black);
+background: var(--white);
+font-family: var(--font-text);
+-webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, h5 {
+font-family: var(--font-title);
+}
+a {
+color: inherit;
+text-decoration: none;
+}
+img {
+display: block;
+max-width: 100%;
+}
+section {
+scroll-margin-top: 95px;
+}
+.container {
+max-width: 1240px;
+}
+/* NAVBAR */
+.site-header {
+position: sticky;
+top: 0;
+z-index: 1030;
+background: rgba(8, 8, 8, .96);
+backdrop-filter: blur(16px);
+border-bottom: 1px solid rgba(255, 255, 255, .09);
+}
+.navbar {
+min-height: 82px;
+padding: 10px 0;
+}
+.navbar-brand {
+margin: 0;
+padding: 0;
+}
+.logo-magistral {
+width: 170px;
+height: 54px;
+object-fit: contain;
+object-position: left center;
+}
+.navbar-collapse {
+flex-grow: 1;
+}
+.navbar-nav {
+gap: 7px;
+}
+.nav-link {
+position: relative;
+padding: 11px 14px !important;
+color: rgba(255, 255, 255, .78) !important;
+font-size: .91rem;
+font-weight: 600;
+transition: color .2s;
+}
+.nav-link:hover,
+.nav-link:focus {
+color: var(--white) !important;
+}
+.nav-link:not(.nav-account)::after {
+position: absolute;
+right: 14px;
+bottom: 4px;
+left: 14px;
+height: 2px;
+background: var(--white);
+content: "";
+transform: scaleX(0);
+transform-origin: left;
+transition: transform .2s;
+}
+.nav-link:not(.nav-account):hover::after {
+transform: scaleX(1);
+}
+.nav-account {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+padding: 11px 18px !important;
+border: 1px solid rgba(255, 255, 255, .32);
+border-radius: 999px;
+color: var(--white) !important;
+transition: background .2s, color .2s;
+}
+.nav-account:hover {
+background: var(--white);
+color: var(--black) !important;
+}
+.nav-cta {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 9px;
+padding: 12px 19px;
+border-radius: 999px;
+background: var(--white);
+color: var(--black);
+font-size: .9rem;
+font-weight: 800;
+transition: transform .2s, background .2s;
+}
+.nav-cta:hover {
+background: #e8e8e8;
+color: var(--black);
+transform: translateY(-2px);
+}
+.navbar-toggler {
+padding: 8px 10px;
+border: 1px solid rgba(255, 255, 255, .35);
+border-radius: 10px;
+box-shadow: none !important;
+}
+.navbar-toggler-icon {
+filter: invert(1);
+}
+/* BOTONES */
+.btn-magistral,
+.btn-outline-magistral {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+min-height: 51px;
+padding: 13px 23px;
+border: 1px solid var(--white);
+border-radius: 999px;
+font-size: .94rem;
+font-weight: 800;
+transition: transform .2s, background .2s, color .2s;
+}
+.btn-magistral {
+background: var(--white);
+color: var(--black);
+}
+.btn-magistral:hover {
+background: #e9e9e9;
+color: var(--black);
+transform: translateY(-2px);
+}
+.btn-outline-magistral {
+background: transparent;
+color: var(--white);
+}
+.btn-outline-magistral:hover {
+background: var(--white);
+color: var(--black);
+}
+/* PORTADA */
+.hero {
+position: relative;
+overflow: hidden;
+min-height: calc(100vh - 82px);
+padding: 80px 0 80px;
+background: var(--black);
+color: var(--white);
+}
+.hero::before {
+position: absolute;
+top: -220px;
+right: -180px;
+width: 600px;
+height: 600px;
+border: 1px solid rgba(255, 255, 255, .07);
+border-radius: 50%;
+content: "";
+pointer-events: none;
+}
+.hero-content {
+position: relative;
+z-index: 1;
+}
+.eyebrow {
+display: inline-flex;
+align-items: center;
+gap: 10px;
+padding: 9px 14px;
+border: 1px solid rgba(255, 255, 255, .2);
+border-radius: 999px;
+color: #e2e2e2;
+font-size: .76rem;
+font-weight: 700;
+letter-spacing: .08em;
+text-transform: uppercase;
+}
+.eyebrow i {
+font-size: 1rem;
+}
+.hero h1 {
+margin: 28px 0 0;
+color: var(--white);
+font-size: clamp(4rem, 8.5vw, 8rem);
+font-weight: 900;
+letter-spacing: -.085em;
+line-height: .91;
+overflow-wrap: anywhere;
+animation: appear .8s ease both;
+}
+.hero h1 em {
+display: block;
+margin-top: 25px;
+font-size: clamp(1rem, 2.2vw, 1.65rem);
+font-style: normal;
+font-weight: 700;
+letter-spacing: .17em;
+line-height: 1.5;
+}
+.hero-description {
+max-width: 510px;
+margin: 25px 0;
+color: #c9c9c9;
+font-size: 1.02rem;
+line-height: 1.9;
+}
+.hero-actions {
+display: flex;
+flex-wrap: wrap;
+gap: 12px;
+}
+.trust-row {
+display: flex;
+flex-wrap: wrap;
+gap: 22px;
+margin-top: 27px;
+color: #d2d2d2;
+font-size: .85rem;
+}
+.trust-row i {
+margin-right: 5px;
+color: var(--white);
+}
+@keyframes appear {
+from {
+opacity: 0;
+transform: translateY(22px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+/* CARRUSEL CIRCULAR */
+.hero-art {
+position: relative;
+display: flex;
+align-items: center;
+justify-content: center;
+min-height: 460px;
+padding: 15px;
+}
+.food-carousel {
+width: min(100%, 430px);
+aspect-ratio: 1;
+overflow: hidden;
+border-radius: 50%;
+background: #171717;
+box-shadow: 0 0 0 12px rgba(255, 255, 255, .035),
+0 0 0 13px rgba(255, 255, 255, .12),
+0 28px 75px rgba(0, 0, 0, .4);
+}
+.food-carousel .carousel-inner,
+.food-carousel .carousel-item {
+width: 100%;
+height: 100%;
+overflow: hidden;
+border-radius: 50%;
+}
+.food-carousel .carousel-item img {
+width: 100%;
+height: 100%;
+border-radius: 50%;
+object-fit: cover;
+transition: transform .8s ease;
+}
+.food-carousel .carousel-item.active img {
+animation: zoomFood 1s ease both;
+}
+@keyframes zoomFood {
+from { transform: scale(1.08); }
+to { transform: scale(1); }
+}
+.food-carousel .carousel-control-prev,
+.food-carousel .carousel-control-next {
+top: 50%;
+bottom: auto;
+width: 42px;
+height: 42px;
+margin: 0 12px;
+border-radius: 50%;
+background: var(--white);
+opacity: 1;
+transform: translateY(-50%);
+}
+.food-carousel .carousel-control-prev-icon,
+.food-carousel .carousel-control-next-icon {
+width: 16px;
+height: 16px;
+filter: invert(1);
+}
+.food-carousel .carousel-indicators {
+z-index: 5;
+margin-bottom: 20px;
+}
+.food-carousel .carousel-indicators [data-bs-target] {
+width: 7px;
+height: 7px;
+margin: 0 4px;
+border: 0;
+border-radius: 50%;
+background: var(--white);
+}
+.floating-note {
+position: absolute;
+z-index: 3;
+display: flex;
+align-items: center;
+gap: 9px;
+padding: 13px 17px;
+border: 1px solid rgba(255, 255, 255, .12);
+border-radius: 14px;
+background: #fff;
+color: var(--black);
+box-shadow: 0 12px 35px rgba(0, 0, 0, .2);
+font-size: .83rem;
+font-weight: 800;
+}
+.note-one {
+top: 12%;
+left: -1%;
+}
+.note-two {
+right: -1%;
+bottom: 12%;
+}
+/* ESTILO GENERAL DE SECCIONES */
+.section {
+padding: 95px 0;
+}
+.section-heading {
+max-width: 720px;
+margin: 0 auto 52px;
+text-align: center;
+}
+.section-kicker {
+color: #686868;
+font-size: .75rem;
+font-weight: 800;
+letter-spacing: .17em;
+text-transform: uppercase;
+}
+.section-heading h2 {
+margin: 14px 0;
+font-size: clamp(2.3rem, 5vw, 3.7rem);
+font-weight: 900;
+letter-spacing: -.065em;
+line-height: 1.08;
+}
+.section-heading p {
+margin: 0;
+color: var(--gray);
+font-size: 1rem;
+line-height: 1.9;
+}
+/* VENTAJAS */
+.benefits-section {
+background: var(--white);
+}
+.benefit-card {
+height: 100%;
+padding: 28px 23px;
+border: 1px solid var(--line);
+border-radius: var(--radius);
+background: var(--white);
+transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+.benefit-card:hover {
+transform: translateY(-6px);
+border-color: #c8c8c8;
+box-shadow: var(--shadow);
+}
+.benefit-icon {
+display: grid;
+place-items: center;
+width: 53px;
+height: 53px;
+margin-bottom: 22px;
+border-radius: 15px;
+background: var(--black);
+color: var(--white);
+font-size: 1.45rem;
+}
+.benefit-card h3 {
+margin-bottom: 11px;
+font-size: 1.25rem;
+font-weight: 800;
+}
+.benefit-card p {
+margin: 0;
+color: var(--gray);
+font-size: .94rem;
+line-height: 1.8;
+}
+/* MENÚ */
+.menu-section {
+background: var(--light);
+}
+.category-list {
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: 10px;
+margin: 0 0 40px;
+}
+.category-item {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 11px 18px;
+border: 1px solid #dededb;
+border-radius: 999px;
+background: var(--white);
+color: var(--black);
+font-size: .88rem;
+font-weight: 700;
+transition: background .2s, color .2s, border-color .2s;
+}
+.category-item:hover {
+border-color: var(--black);
+background: var(--black);
+color: var(--white);
+}
+.menu-block {
+margin-bottom: 38px;
+scroll-margin-top: 105px;
+}
+.menu-top {
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 14px;
+padding: 23px 0;
+border-bottom: 1px solid #dcdcd8;
+}
+.menu-top h3 {
+display: flex;
+align-items: center;
+gap: 12px;
+margin: 0;
+font-size: 1.7rem;
+font-weight: 900;
+letter-spacing: -.04em;
+}
+.menu-top h3 i {
+display: grid;
+place-items: center;
+width: 43px;
+height: 43px;
+border-radius: 13px;
+background: var(--black);
+color: var(--white);
+font-size: 1.2rem;
+}
+.menu-tag {
+padding: 8px 13px;
+border-radius: 999px;
+background: #e9e9e6;
+color: #333;
+font-size: .8rem;
+font-weight: 800;
+}
+.menu-grid {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 23px;
+padding-top: 25px;
+}
+.dish-card {
+display: flex;
+flex-direction: column;
+min-width: 0;
+overflow: hidden;
+border: 1px solid #eaeae7;
+border-radius: var(--radius);
+background: var(--white);
+transition: transform .25s, box-shadow .25s;
+}
+.dish-card:hover {
+transform: translateY(-5px);
+box-shadow: var(--shadow);
+}
+.dish-image-wrap {
+position: relative;
+overflow: hidden;
+aspect-ratio: 4 / 3;
+background: #e5e5e2;
+}
+.dish-image {
+width: 100%;
+height: 100%;
+object-fit: cover;
+transition: transform .5s ease;
+}
+.dish-card:hover .dish-image {
+transform: scale(1.06);
+}
+.dish-content {
+display: flex;
+flex: 1;
+flex-direction: column;
+padding: 21px;
+}
+.dish-card h4 {
+margin: 0 0 9px;
+font-size: 1.24rem;
+font-weight: 800;
+letter-spacing: -.025em;
+}
+.dish-card p {
+flex: 1;
+margin: 0 0 20px;
+color: var(--gray);
+font-size: .91rem;
+line-height: 1.75;
+}
+.dish-bottom {
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 12px;
+padding-top: 15px;
+border-top: 1px solid #eeeeeb;
+}
+.menu-price {
+color: var(--black);
+font-family: var(--font-title);
+font-size: 1.28rem;
+font-weight: 900;
+white-space: nowrap;
+}
+.btn-order {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+gap: 7px;
+padding: 10px 15px;
+border: 1px solid var(--black);
+border-radius: 999px;
+background: var(--black);
+color: var(--white);
+font-size: .82rem;
+font-weight: 800;
+transition: background .2s, color .2s;
+}
+.btn-order:hover {
+background: var(--white);
+color: var(--black);
+}
+.menu-empty {
+padding: 55px 20px;
+border: 1px dashed #c8c8c4;
+border-radius: var(--radius);
+background: var(--white);
+text-align: center;
+}
+.menu-empty > i {
+font-size: 3rem;
+}
+.menu-empty h3 {
+margin-top: 18px;
+font-weight: 900;
+}
+.menu-empty p {
+color: var(--gray);
+}
+.menu-bottom-cta {
+margin-top: 48px;
+padding: 30px;
+border-radius: var(--radius);
+background: var(--black);
+color: var(--white);
+text-align: center;
+}
+.menu-bottom-cta p {
+margin: 0 0 16px;
+font-size: 1.05rem;
+font-weight: 700;
+}
+/* CÓMO PEDIR */
+.how-section {
+overflow: hidden;
+background: var(--black);
+color: var(--white);
+}
+.how-section .section-kicker {
+color: #bdbdbd;
+}
+.how-section .section-heading h2 {
+color: var(--white);
+}
+.how-section .section-heading p {
+color: #bdbdbd;
+}
+.step-card {
+height: 100%;
+padding: 27px;
+border: 1px solid #303030;
+border-radius: var(--radius);
+background: #111;
+transition: transform .2s, background .2s;
+}
+.step-card:hover {
+transform: translateY(-5px);
+background: #191919;
+}
+.step-number {
+color: #aaa;
+font-family: var(--font-title);
+font-size: 3.4rem;
+font-weight: 900;
+letter-spacing: -.07em;
+}
+.step-card h3 {
+margin: 20px 0 10px;
+font-size: 1.35rem;
+font-weight: 800;
+}
+.step-card p {
+margin: 0;
+color: #c3c3c3;
+font-size: .94rem;
+line-height: 1.8;
+}
+/* INICIO DE SESIÓN */
+.login-section {
+background: var(--white);
+}
+.login-copy h2 {
+margin: 15px 0;
+font-size: clamp(2.4rem, 5vw, 3.7rem);
+font-weight: 900;
+letter-spacing: -.065em;
+line-height: 1.1;
+}
+.login-copy > p {
+max-width: 470px;
+color: var(--gray);
+line-height: 1.9;
+}
+.login-perk {
+display: flex;
+align-items: center;
+gap: 13px;
+margin-top: 17px;
+font-weight: 700;
+}
+.login-perk i {
+display: grid;
+place-items: center;
+width: 38px;
+height: 38px;
+flex-shrink: 0;
+border-radius: 12px;
+background: var(--black);
+color: var(--white);
+}
+.login-card {
+padding: clamp(24px, 4vw, 38px);
+border: 1px solid var(--line);
+border-radius: 22px;
+background: var(--white);
+box-shadow: 0 20px 60px rgba(0, 0, 0, .07);
+}
+.login-card h3 {
+font-size: 2rem;
+font-weight: 900;
+letter-spacing: -.04em;
+}
+.subcopy {
+color: var(--gray);
+line-height: 1.7;
+}
+.alert-magistral {
+display: flex;
+gap: 10px;
+padding: 13px 15px;
+margin-bottom: 18px;
+border: 1px solid #dededb;
+border-radius: 12px;
+background: var(--light);
+color: var(--black);
+overflow-wrap: anywhere;
+}
+.field {
+position: relative;
+margin-bottom: 16px;
+}
+.field .form-control {
+min-height: 58px;
+padding: 20px 48px 8px 45px;
+border: 1px solid #dededb;
+border-radius: 12px;
+background: #fff;
+color: var(--black);
+box-shadow: none;
+}
+.field .form-control:focus {
+border-color: var(--black);
+box-shadow: 0 0 0 3px rgba(0, 0, 0, .07);
+}
+.field .form-control::placeholder {
+color: transparent;
+}
+.field label {
+padding: 16px 45px;
+color: #737373;
+}
+.field .field-icon {
+position: absolute;
+z-index: 3;
+top: 20px;
+left: 16px;
+color: #454545;
+}
+.show-password {
+position: absolute;
+z-index: 5;
+top: 9px;
+right: 8px;
+display: grid;
+place-items: center;
+width: 40px;
+height: 40px;
+border: 0;
+border-radius: 9px;
+background: transparent;
+color: var(--black);
+}
+.show-password:hover {
+background: var(--light);
+}
+.login-submit {
+width: 100%;
+min-height: 53px;
+margin-top: 5px;
+border: 1px solid var(--black);
+border-radius: 999px;
+background: var(--black);
+color: var(--white);
+font-weight: 800;
+transition: background .2s, color .2s;
+}
+.login-submit:hover {
+background: var(--white);
+color: var(--black);
+}
+.register-line {
+margin: 23px 0 0;
+color: var(--gray);
+text-align: center;
+font-size: .92rem;
+}
+.register-line a {
+color: var(--black);
+font-weight: 800;
+text-decoration: underline;
+text-underline-offset: 3px;
+}
+/* FOOTER */
+.footer {
+padding: 55px 0 22px;
+background: var(--black);
+color: var(--white);
+}
+.footer-brand {
+display: inline-flex;
+align-items: center;
+gap: 10px;
+color: var(--white);
+font-family: var(--font-title);
+font-size: 2rem;
+font-weight: 900;
+letter-spacing: -.055em;
+}
+.footer-brand:hover {
+color: #ddd;
+}
+.footer p {
+max-width: 380px;
+margin-top: 15px;
+color: #bdbdbd;
+font-size: .94rem;
+line-height: 1.85;
+}
+.footer-links {
+display: flex;
+flex-wrap: wrap;
+justify-content: flex-end;
+gap: 12px 24px;
+padding-top: 12px;
+}
+.footer-links a {
+color: #e4e4e4;
+font-size: .9rem;
+transition: color .2s;
+}
+.footer-links a:hover {
+color: var(--white);
+text-decoration: underline;
+text-underline-offset: 4px;
+}
+.footer-bottom {
+display: flex;
+flex-wrap: wrap;
+justify-content: space-between;
+gap: 12px;
+padding-top: 22px;
+margin-top: 30px;
+border-top: 1px solid #303030;
+color: #aaa;
+font-size: .82rem;
+}
+:focus-visible {
+outline: 3px solid #8c8c8c;
+outline-offset: 3px;
+}
+/* RESPONSIVE */
+@media (max-width: 991.98px) {
+.navbar {
+min-height: 74px;
+}
+.navbar-collapse {
+padding: 14px 0 20px;
+}
+.navbar-nav {
+align-items: stretch !important;
+gap: 4px;
+}
+.nav-link {
+padding: 12px 10px !important;
+}
+.nav-link::after {
+display: none;
+}
+.nav-account,
+.nav-cta {
+width: 100%;
+margin-top: 8px;
+}
+.hero {
+padding: 60px 0;
+}
+.hero-art {
+min-height: 390px;
+margin-top: 10px;
+}
+.food-carousel {
+width: min(78%, 390px);
+}
+.note-one {
+left: 4%;
+}
+.note-two {
+right: 4%;
+}
+.menu-grid {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.section {
+padding: 75px 0;
+}
+}
+@media (max-width: 575.98px) {
+.logo-magistral {
+width: 145px;
+height: 46px;
+}
+.hero {
+padding: 45px 0 55px;
+}
+.hero h1 {
+font-size: clamp(3.5rem, 15vw, 5rem);
+}
+.hero h1 em {
+margin-top: 19px;
+font-size: .95rem;
+letter-spacing: .1em;
+}
+.hero-description {
+font-size: .96rem;
+}
+.hero-actions {
+flex-direction: column;
+}
+.hero-actions a {
+width: 100%;
+}
+.trust-row {
+gap: 12px;
+font-size: .79rem;
+}
+.hero-art {
+min-height: 315px;
+padding: 10px;
+}
+.food-carousel {
+width: min(77vw, 310px);
+}
+.floating-note {
+gap: 6px;
+padding: 10px 12px;
+border-radius: 11px;
+font-size: .72rem;
+}
+.note-one {
+top: 7%;
+left: 0;
+}
+.note-two {
+right: 0;
+bottom: 6%;
+}
+.section {
+padding: 60px 0;
+}
+.section-heading {
+margin-bottom: 35px;
+}
+.section-heading h2 {
+font-size: 2.35rem;
+}
+.benefit-card {
+padding: 23px;
+}
+.category-list {
+justify-content: flex-start;
+gap: 8px;
+}
+.category-item {
+padding: 10px 14px;
+font-size: .82rem;
+}
+.menu-top h3 {
+font-size: 1.4rem;
+}
+.menu-grid {
+grid-template-columns: 1fr;
+gap: 18px;
+padding-top: 18px;
+}
+.dish-image-wrap {
+aspect-ratio: 16 / 10;
+}
+.dish-content {
+padding: 19px;
+}
+.menu-bottom-cta {
+padding: 25px 18px;
+}
+.step-card {
+padding: 23px;
+}
+.login-card {
+padding: 23px 18px;
+}
+.footer-links {
+justify-content: flex-start;
+gap: 14px 20px;
+}
+.footer-bottom {
+flex-direction: column;
+}
+}
+@media (prefers-reduced-motion: reduce) {
+html {
+scroll-behavior: auto;
+}
+*,
+*::before,
+*::after {
+animation: none !important;
+transition: none !important;
+}
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+<nav class="navbar navbar-expand-lg" aria-label="Navegación principal">
+<div class="container">
+<a class="navbar-brand" th:href="@{/}" aria-label="MAGISTRAL, página de inicio">
+<img th:src="@{/img/logo.png}"
+src="/img/logo.png"
+alt="Logo MAGISTRAL"
+class="logo-magistral">
+</a>
+<button class="navbar-toggler" type="button"
+data-bs-toggle="collapse"
+data-bs-target="#menuPrincipal"
+aria-controls="menuPrincipal"
+aria-expanded="false"
+aria-label="Abrir menú de navegación">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="menuPrincipal">
+<ul class="navbar-nav ms-auto align-items-lg-center">
+<li class="nav-item">
+<a class="nav-link" th:href="@{/#menu}" href="#menu">Menú</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" th:href="@{/#ventajas}" href="#ventajas">Nosotros</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" th:href="@{/#como}" href="#como">Cómo pedir</a>
+</li>
+<li class="nav-item ms-lg-2">
+<a class="nav-cta" th:href="@{/#menu}" href="#menu">
+Ver platos <i class="bi bi-arrow-up-right"></i>
+</a>
+</li>
+<li class="nav-item ms-lg-2">
+<a class="nav-link nav-account"
+th:href="@{/login}">
+<i class="bi bi-person"></i>
+Mi cuenta
+</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+</header>
+<main>
+<!-- PORTADA PRINCIPAL -->
+<section class="hero" id="inicio">
+<div class="container hero-content">
+<div class="row align-items-center g-4">
+<div class="col-lg-7">
+<span class="eyebrow">
+<i class="bi bi-stars"></i>
+Una experiencia para disfrutar
+</span>
+<h1>
+MAGISTRAL
+<em> ° COCINA IRRESISTIBLE °</em>
+</h1>
+<p class="hero-description">
+Grandes sabores, platos irresistibles y ese antojo
+que merece algo especial. Descubre nuestro menú
+y encuentra tu próximo favorito.
+</p>
+<div class="hero-actions">
+<a class="btn-magistral" href="#menu">
+Explorar el menú
+<i class="bi bi-arrow-down-right"></i>
+</a>
+<a class="btn-outline-magistral" href="#como">
+Cómo pedir
+<i class="bi bi-play-circle"></i>
+</a>
+</div>
+<div class="trust-row">
+<span><i class="bi bi-check-circle-fill"></i> Fácil de pedir</span>
+<span><i class="bi bi-heart-fill"></i> Hecho para tus antojos</span>
+</div>
+</div>
+<div class="col-lg-5">
+<div class="hero-art">
+<div id="magistralCarousel"
+class="carousel slide food-carousel"
+data-bs-ride="carousel"
+data-bs-interval="4000"
+aria-label="Galería de platos MAGISTRAL">
+<div class="carousel-indicators">
+<button type="button"
+data-bs-target="#magistralCarousel"
+data-bs-slide-to="0"
+class="active"
+aria-current="true"
+aria-label="Plato 1"></button>
+<button type="button"
+data-bs-target="#magistralCarousel"
+data-bs-slide-to="1"
+aria-label="Plato 2"></button>
+<button type="button"
+data-bs-target="#magistralCarousel"
+data-bs-slide-to="2"
+aria-label="Plato 3"></button>
+</div>
+<div class="carousel-inner">
+<div class="carousel-item active">
+<img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1000&q=85"
+alt="Hamburguesa especial"
+fetchpriority="high">
+</div>
+<div class="carousel-item">
+<img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1000&q=85"
+alt="Hamburguesa con queso">
+</div>
+<div class="carousel-item">
+<img src="https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=1000&q=85"
+alt="Papas fritas crujientes">
+</div>
+</div>
+<button class="carousel-control-prev"
+type="button"
+data-bs-target="#magistralCarousel"
+data-bs-slide="prev"
+aria-label="Plato anterior">
+<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+</button>
+<button class="carousel-control-next"
+type="button"
+data-bs-target="#magistralCarousel"
+data-bs-slide="next"
+aria-label="Plato siguiente">
+<span class="carousel-control-next-icon" aria-hidden="true"></span>
+</button>
+</div>
+<div class="floating-note note-one">
+<i class="bi bi-fire"></i>
+Sabor magistral
+</div>
+<div class="floating-note note-two">
+<i class="bi bi-emoji-heart-eyes"></i>
+Antojo resuelto
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- VENTAJAS -->
+<section class="section benefits-section" id="ventajas">
+<div class="container">
+<div class="section-heading">
+<span class="section-kicker">La experiencia MAGISTRAL</span>
+<h2>Menos vueltas.<br>Más sabor.</h2>
+<p>
+Explora nuestros platos, descubre nuevas opciones
+y realiza tu pedido de forma sencilla.
+</p>
+</div>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+<div class="col">
+<article class="benefit-card">
+<div class="benefit-icon">
+<i class="bi bi-lightning-charge-fill"></i>
+</div>
+<h3>Fácil y rápido</h3>
+<p>Encuentra tus favoritos y comienza tu pedido sin complicaciones.</p>
+</article>
+</div>
+<div class="col">
+<article class="benefit-card">
+<div class="benefit-icon">
+<i class="bi bi-eye-fill"></i>
+</div>
+<h3>Todo a la vista</h3>
+<p>Consulta el nombre, la descripción y el precio de cada plato.</p>
+</article>
+</div>
+<div class="col">
+<article class="benefit-card">
+<div class="benefit-icon">
+<i class="bi bi-receipt-cutoff"></i>
+</div>
+<h3>Cuentas claras</h3>
+<p>Revisa los precios antes de iniciar el proceso de compra.</p>
+</article>
+</div>
+<div class="col">
+<article class="benefit-card">
+<div class="benefit-icon">
+<i class="bi bi-heart-fill"></i>
+</div>
+<h3>Para tu antojo</h3>
+<p>Descubre opciones para disfrutar en cualquier momento.</p>
+</article>
+</div>
+</div>
+</div>
+</section>
+<!-- MENÚ DINÁMICO -->
+<section class="section menu-section" id="menu">
+<div class="container">
+<div class="section-heading">
+<span class="section-kicker">El sabor te está llamando</span>
+<h2>Encuentra tu próximo favorito</h2>
+<p>
+Mira nuestro menú, conoce cada opción y elige lo que más
+se te antoje. Explora los platos antes de iniciar sesión.
+</p>
+</div>
+<div th:if="${menu != null and !#maps.isEmpty(menu)}">
+<!-- CATEGORÍAS -->
+<nav class="category-list" aria-label="Categorías del menú">
+<a class="category-item"
+th:each="grupo : ${menu}"
+th:with="nombreCat=${grupo.key == 'HAMBURGUESA' ? 'Hamburguesas' : (grupo.key == 'SALCHIPAPA' ? 'Salchipapas' : (grupo.key == 'BEBIDA' ? 'Bebidas' : grupo.key))},
+iconoCat=${grupo.key == 'HAMBURGUESA' ? 'bi-egg-fried' : (grupo.key == 'SALCHIPAPA' ? 'bi-fire' : (grupo.key == 'BEBIDA' ? 'bi-cup-straw' : 'bi-stars'))}"
+th:href="'#cat-' + ${#strings.toLowerCase(grupo.key)}"
+href="#cat-hamburguesa">
+<i th:class="'bi ' + ${iconoCat}"></i>
+<span th:text="${nombreCat}">Hamburguesas</span>
+</a>
+</nav>
+<!-- UNA SECCIÓN POR CATEGORÍA -->
+<div class="menu-block"
+th:each="grupo : ${menu}"
+th:id="'cat-' + ${#strings.toLowerCase(grupo.key)}"
+th:with="nombreCat=${grupo.key == 'HAMBURGUESA' ? 'Hamburguesas' : (grupo.key == 'SALCHIPAPA' ? 'Salchipapas' : (grupo.key == 'BEBIDA' ? 'Bebidas' : grupo.key))},
+iconoCat=${grupo.key == 'HAMBURGUESA' ? 'bi-egg-fried' : (grupo.key == 'SALCHIPAPA' ? 'bi-fire' : (grupo.key == 'BEBIDA' ? 'bi-cup-straw' : 'bi-stars'))}">
+<div class="menu-top">
+<h3>
+<i th:class="'bi ' + ${iconoCat}"></i>
+<span th:text="${nombreCat}">Hamburguesas</span>
+</h3>
+<span class="menu-tag"
+th:text="${#lists.size(grupo.value)} + ' opciones'">
+4 opciones
+</span>
+</div>
+<div class="menu-grid">
+<article class="dish-card"
+th:each="comida, iterStat : ${grupo.value}">
+<!-- IMÁGENES PROVISIONALES.
+Se pueden reemplazar por imágenes locales después. -->
+<div class="dish-image-wrap">
+<img class="dish-image"
+th:if="${iterStat.index % 5 == 0}"
+src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=85"
+alt="Imagen provisional de hamburguesa"
+loading="lazy">
+<img class="dish-image"
+th:if="${iterStat.index % 5 == 1}"
+src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=85"
+alt="Imagen provisional de hamburguesa con queso"
+loading="lazy">
+<img class="dish-image"
+th:if="${iterStat.index % 5 == 2}"
+src="https://images.unsplash.com/photo-1576107232684-1279f390859f?auto=format&fit=crop&w=900&q=85"
+alt="Imagen provisional de papas fritas"
+loading="lazy">
+<img class="dish-image"
+th:if="${iterStat.index % 5 == 3}"
+src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=900&q=85"
+alt="Imagen provisional de pizza"
+loading="lazy">
+<img class="dish-image"
+th:if="${iterStat.index % 5 == 4}"
+src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=85"
+alt="Imagen provisional de comida preparada"
+loading="lazy">
+</div>
+<div class="dish-content">
+<h4 th:text="${comida.nombre}">
+Hamburguesa Magistral
+</h4>
+<p th:text="${comida.descripcion != null ? comida.descripcion : 'Una deliciosa opción para disfrutar.'}">
+Una deliciosa opción para disfrutar.
+</p>
+<div class="dish-bottom">
+<span class="menu-price"
+th:if="${comida.precio != null}"
+th:text="'$ ' + ${#numbers.formatDecimal(comida.precio, 1, 'POINT', 0, 'COMMA')}">
+$ 18.900
+</span>
+<a class="btn-order"
+th:href="@{/login}"
+th:attr="aria-label='Inicia sesión para pedir ' + ${comida.nombre}">
+<i class="bi bi-bag-plus"></i>
+Pedir
+</a>
+</div>
+</div>
+</article>
+</div>
+</div>
+</div>
+<!-- MENÚ VACÍO -->
+<div th:unless="${menu != null and !#maps.isEmpty(menu)}"
+class="menu-empty">
+<i class="bi bi-egg-fried"></i>
+<h3>Nuestro menú te espera</h3>
+<p>
+En este momento no hay platos disponibles para mostrar.
+</p>
+<a class="btn-magistral mt-3" th:href="@{/login}">
+Iniciar sesión
+<i class="bi bi-arrow-right"></i>
+</a>
+</div>
+<div class="menu-bottom-cta">
+<p>¿Ya encontraste tu favorito?</p>
+<a class="btn-magistral" href="#login">
+Quiero hacer mi pedido
+<i class="bi bi-arrow-right"></i>
+</a>
+</div>
+</div>
+</section>
+<!-- CÓMO PEDIR -->
+<section class="section how-section" id="como">
+<div class="container">
+<div class="section-heading">
+<span class="section-kicker">Así de simple</span>
+<h2>Tu antojo, en tres pasos</h2>
+<p>
+Explora primero. Inicia sesión cuando estés listo
+para realizar tu pedido.
+</p>
+</div>
+<div class="row g-3">
+<div class="col-md-4">
+<article class="step-card">
+<span class="step-number">01</span>
+<h3>Explora el menú</h3>
+<p>Conoce los platos disponibles y consulta sus precios sin registrarte.</p>
+</article>
+</div>
+<div class="col-md-4">
+<article class="step-card">
+<span class="step-number">02</span>
+<h3>Inicia sesión</h3>
+<p>Cuando elijas un plato, ingresa a tu cuenta o crea una nueva.</p>
+</article>
+</div>
+<div class="col-md-4">
+<article class="step-card">
+<span class="step-number">03</span>
+<h3>Realiza tu pedido</h3>
+<p>Continúa con el proceso de compra y disfruta tu experiencia MAGISTRAL.</p>
+</article>
+</div>
+</div>
+</div>
+</section>
+<!-- INICIO DE SESIÓN -->
+<section class="section login-section" id="login">
+<div class="container">
+<div class="row align-items-center g-5">
+<div class="col-lg-6 login-copy">
+<span class="section-kicker">Tu próxima experiencia comienza aquí</span>
+<h2>
+¿Listo para disfrutar algo magistral?
+</h2>
+<p>
+Inicia sesión para continuar con tu pedido.
+Si todavía no tienes una cuenta, puedes registrarte.
+</p>
+<div class="login-perk">
+<i class="bi bi-check-lg"></i>
+<span>Acceso a tu cuenta personal</span>
+</div>
+<div class="login-perk">
+<i class="bi bi-receipt"></i>
+<span>Consulta de tus pedidos</span>
+</div>
+<div class="login-perk">
+<i class="bi bi-person-check"></i>
+<span>Una experiencia más organizada</span>
+</div>
+</div>
+<div class="col-lg-5 offset-lg-1">
+<div class="login-card">
+<h3>¡Hola de nuevo!</h3>
+<p class="subcopy mb-4">
+Ingresa tus datos para continuar.
+</p>
+<div class="alert-magistral"
+role="status"
+th:if="${mensaje != null}">
+<i class="bi bi-info-circle-fill"></i>
+<span th:text="${mensaje}">Cerraste sesión. Hasta pronto.</span>
+</div>
+<div class="alert-magistral"
+role="alert"
+th:if="${error != null}">
+<i class="bi bi-exclamation-circle-fill"></i>
+<span th:text="${error}">El correo o la clave no coinciden.</span>
+</div>
+<form th:action="@{/login}" method="post" novalidate>
+<div class="field form-floating">
+<i class="bi bi-envelope field-icon" aria-hidden="true"></i>
+<input type="email"
+class="form-control"
+id="correo"
+name="correo"
+placeholder="Correo electrónico"
+autocomplete="username"
+required
+th:value="${correo}"
+th:classappend="${error != null} ? 'is-invalid'">
+<label for="correo">Correo electrónico</label>
+</div>
+<div class="field form-floating">
+<i class="bi bi-lock field-icon" aria-hidden="true"></i>
+<input type="password"
+class="form-control"
+id="clave"
+name="clave"
+placeholder="Contraseña"
+autocomplete="current-password"
+required>
+<label for="clave">Contraseña</label>
+<button type="button"
+class="show-password"
+id="verClave"
+aria-label="Mostrar contraseña"
+aria-pressed="false">
+<i class="bi bi-eye"></i>
+</button>
+</div>
+<button type="submit" class="login-submit">
+Iniciar sesión
+<i class="bi bi-arrow-right ms-1"></i>
+</button>
+</form>
+<p class="register-line">
+¿Aún no tienes cuenta?
+<a th:href="@{/registro}">Regístrate aquí</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- PIE DE PÁGINA -->
+<footer class="footer">
+<div class="container">
+<div class="row align-items-start gy-4">
+<div class="col-lg-6">
+<a class="footer-brand" th:href="@{/}">
+<i class="bi bi-fire"></i>
+MAGISTRAL
+</a>
+<p>
+Sabor que conquista. Descubre tus platos favoritos
+y disfruta una experiencia hecha para ti.
+</p>
+</div>
+<div class="col-lg-6">
+<nav class="footer-links" aria-label="Navegación del pie">
+<a th:href="@{/#inicio}" href="#inicio">Inicio</a>
+<a th:href="@{/#menu}" href="#menu">Menú</a>
+<a th:href="@{/#ventajas}" href="#ventajas">Nosotros</a>
+<a th:href="@{/#como}" href="#como">Cómo pedir</a>
+<a th:href="@{/login}">Mi cuenta</a>
+</nav>
+</div>
+</div>
+<div class="footer-bottom">
+<span>
+&copy;
+<span th:text="${#temporals.year(#temporals.createNow())}">2026</span>
+MAGISTRAL. Todos los derechos reservados.
+</span>
+<span>Preparado con sabor <i class="bi bi-heart-fill"></i></span>
+</div>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+const boton = document.getElementById('verClave');
+const campo = document.getElementById('clave');
+if (boton && campo) {
+boton.addEventListener('click', function () {
+const visible = campo.type === 'text';
+campo.type = visible ? 'password' : 'text';
+boton.setAttribute('aria-pressed', String(!visible));
+boton.setAttribute(
+'aria-label',
+visible ? 'Mostrar contraseña' : 'Ocultar contraseña'
+);
+boton.innerHTML = visible
+? '<i class="bi bi-eye"></i>'
+: '<i class="bi bi-eye-slash"></i>';
+});
+}
+const menuPrincipal = document.getElementById('menuPrincipal');
+if (menuPrincipal) {
+menuPrincipal.querySelectorAll('a[href^="#"]').forEach(function (enlace) {
+enlace.addEventListener('click', function () {
+if (window.innerWidth < 992 &&
+menuPrincipal.classList.contains('show')) {
+bootstrap.Collapse.getOrCreateInstance(menuPrincipal).hide();
+}
+});
+});
+}
+})();
+</script>
+<script th:if="${error != null or mensaje != null}">
+document.addEventListener('DOMContentLoaded', function () {
+const login = document.getElementById('login');
+if (login) {
+login.scrollIntoView({
+behavior: 'smooth',
+block: 'start'
+});
+}
+});
+</script>
+</body>
+</html>

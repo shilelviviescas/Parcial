@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos/layout :: head(${titulo})}"></head>
+
+<body>
+
+<header th:replace="~{fragmentos/navbar_cajero :: navbar('ventas')}"></header>
+
+<main class="section">
+    <div class="container">
+
+        <div class="page-head d-flex flex-wrap justify-content-between align-items-end gap-3">
+            <div>
+                <span class="section-kicker">Rol cajero</span>
+                <h1>Ventas</h1>
+                <p th:if="${esHoy}">Lo que se ha vendido hoy.</p>
+                <p th:unless="${esHoy}" th:text="'Ventas del ' + ${#temporals.format(fecha, 'dd/MM/yyyy')} + '.'">Ventas del día.</p>
+            </div>
+
+            <form th:action="@{/cajero/ventas}" method="get" class="d-flex flex-wrap gap-2 align-items-center">
+                <input type="date" name="fecha" class="form-control"
+                       th:value="${fechaTexto}"
+                       style="min-height: 52px; border-radius: 0; max-width: 220px;">
+                <button type="submit" class="btn-m"><i class="bi bi-search"></i> Ver</button>
+                <a class="btn-m-outline" th:href="@{/cajero/ventas}">Hoy</a>
+            </form>
+        </div>
+
+        <!-- ==================== TOTALES ==================== -->
+        <div class="stat-row">
+            <div class="stat">
+                <strong th:text="'$ ' + ${#numbers.formatDecimal(totalPagado, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                <span>Total pagado</span>
+            </div>
+            <div class="stat">
+                <strong th:text="${cantidadPagos}">0</strong>
+                <span>Pagos</span>
+            </div>
+            <div class="stat">
+				<div class="stat">
+				    <strong th:text="'$ ' + ${#numbers.formatDecimal(totalMesas, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+				    <span th:text="'Mesas · ' + ${cantMesas} + ' pagos'">Mesas</span>
+				</div>
+				<div class="stat">
+				    <strong th:text="'$ ' + ${#numbers.formatDecimal(totalDomicilio, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+				    <span th:text="'Domicilio · ' + ${cantDomicilio} + ' pagos'">Domicilio</span>
+				</div>
+                <strong th:text="'$ ' + ${#numbers.formatDecimal(totalPropinas, 1, 'POINT', 0, 'COMMA')}">$ 0</strong>
+                <span>En propinas</span>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- ==================== MEDIOS DE PAGO ==================== -->
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-3">Por medio de pago</h3>
+
+                <div class="tabla-wrap">
+                    <table class="tabla-m">
+                        <thead>
+                        <tr>
+                            <th>Medio</th>
+                            <th class="text-center">Pagos</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><i class="bi bi-cash-coin me-2"></i><strong>Efectivo</strong></td>
+                            <td class="text-center" th:text="${cantEfectivo}">0</td>
+                            <td class="text-end" th:text="'$ ' + ${#numbers.formatDecimal(totalEfectivo, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-credit-card me-2"></i><strong>Tarjeta</strong></td>
+                            <td class="text-center" th:text="${cantTarjeta}">0</td>
+                            <td class="text-end" th:text="'$ ' + ${#numbers.formatDecimal(totalTarjeta, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                        </tr>
+                        <tr>
+                            <td><i class="bi bi-phone me-2"></i><strong>Transferencia</strong></td>
+                            <td class="text-center" th:text="${cantTransferencia}">0</td>
+                            <td class="text-end" th:text="'$ ' + ${#numbers.formatDecimal(totalTransferencia, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td class="text-center"><strong th:text="${cantidadPagos}">0</strong></td>
+                            <td class="text-end"><strong th:text="'$ ' + ${#numbers.formatDecimal(totalPagado, 1, 'POINT', 0, 'COMMA')}">$ 0</strong></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ==================== POR MESA ==================== -->
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-3">Por mesa</h3>
+
+                <div class="tabla-wrap" th:if="${!#maps.isEmpty(porMesaTotal)}">
+                    <table class="tabla-m">
+                        <thead>
+                        <tr>
+                            <th>Mesa</th>
+                            <th class="text-center">Pagos</th>
+                            <th class="text-end">Total pagado</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="e : ${porMesaTotal}">
+                            <td><strong th:text="'Mesa ' + ${e.key}">Mesa 1</strong></td>
+                            <td class="text-center" th:text="${porMesaCantidad[e.key]}">1</td>
+                            <td class="text-end" th:text="'$ ' + ${#numbers.formatDecimal(e.value, 1, 'POINT', 0, 'COMMA')}">$ 0</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card-m text-center" th:if="${#maps.isEmpty(porMesaTotal)}">
+                    <p class="mb-0">No hay ventas registradas en este día.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== DETALLE DE PAGOS ==================== -->
+        <div class="mt-5" th:if="${!#lists.isEmpty(pagos)}">
+
+            <h3 class="fw-bold mb-3">Pagos del día</h3>
+
+            <div class="tabla-wrap">
+                <table class="tabla-m">
+                    <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Orden</th>
+                        <th>Mesa</th>
+                        <th>Cliente</th>
+                        <th>Medio</th>
+                        <th>Propina</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${pagos}">
+                        <td th:text="${#temporals.format(p.fecha, 'HH:mm')}">12:00</td>
+                        <td><strong th:text="${p.numeroOrden > 0 ? '#' + p.numeroOrden : '-'}">#1</strong></td>
+                        <td><strong th:text="${p.numeroMesa}">1</strong></td>
+                        <td th:text="${p.nombreCliente}">Cliente</td>
+                        <td>
+                            <span class="chip"
+                                  th:text="${p.metodo == 'EFECTIVO' ? 'Efectivo' : (p.metodo == 'TARJETA' ? 'Tarjeta' : 'Transferencia')}">Efectivo</span>
+                        </td>
+                        <td th:text="${p.conPropina ? '$ ' + #numbers.formatDecimal(p.propina, 1, 'POINT', 0, 'COMMA') : '-'}">-</td>
+                        <td><strong th:text="'$ ' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 0, 'COMMA')}">$ 0</strong></td>
+                        <td class="text-end">
+                            <a class="btn-m-outline" th:href="@{/cajero/pagos/{id}/factura(id=${p.id})}">
+                                <i class="bi bi-receipt"></i> Factura
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<th:block th:replace="~{fragmentos/layout :: scripts}"></th:block>
+
+</body>
+</html>
